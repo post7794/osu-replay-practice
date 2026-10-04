@@ -21,6 +21,14 @@ namespace osu.Game.Overlays.Settings.Sections.Input
         private ResetButton resetButton = null!;
 
         /// <summary>
+        /// Keep multiple editors for the same bindings in sync without replacing a row during key capture.
+        /// </summary>
+        public bool TrackExternalChanges { get; init; }
+
+        private IDisposable? bindingSubscription;
+        private bool bindingsDirty;
+
+        /// <summary>
         /// After a successful binding, automatically select the next binding row to make quickly
         /// binding a large set of keys easier on the user.
         /// </summary>
@@ -77,6 +85,32 @@ namespace osu.Game.Overlays.Settings.Sections.Input
             });
 
             updateDefaultButtonState();
+        }
+
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+
+            if (TrackExternalChanges)
+                bindingSubscription = realm.RegisterForNotifications(r => r.All<RealmKeyBinding>().Where(b => b.RulesetName == null && b.Variant == null),
+                    (_, _) => bindingsDirty = true);
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            if (bindingsDirty && !Children.OfType<KeyBindingRow>().Any(row => row.HasFocus))
+            {
+                bindingsDirty = false;
+                reloadAllBindings();
+            }
+        }
+
+        protected override void Dispose(bool isDisposing)
+        {
+            bindingSubscription?.Dispose();
+            base.Dispose(isDisposing);
         }
 
         private void updateDefaultButtonState()

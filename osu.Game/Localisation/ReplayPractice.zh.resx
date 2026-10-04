@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="PausePractice" xml:space="preserve"><value>暂停练习</value></data>
+  <data name="ResumePractice" xml:space="preserve"><value>继续练习</value></data>
+  <data name="PauseReplay" xml:space="preserve"><value>暂停回放</value></data>
+  <data name="ResumeReplay" xml:space="preserve"><value>继续回放</value></data>
+  <data name="Retry" xml:space="preserve"><value>重试</value></data>
+  <data name="TakeOver" xml:space="preserve"><value>立即接管</value></data>
+  <data name="PreviousObject" xml:space="preserve"><value>上一物件</value></data>
+  <data name="NextObject" xml:space="preserve"><value>下一物件</value></data>
+  <data name="BackwardSecond" xml:space="preserve"><value>后退 1 秒</value></data>
+  <data name="ForwardSecond" xml:space="preserve"><value>前进 1 秒</value></data>
+  <data name="PreviousFrame" xml:space="preserve"><value>上一帧</value></data>
+  <data name="NextFrame" xml:space="preserve"><value>下一帧</value></data>
+  <data name="Slower" xml:space="preserve"><value>减速</value></data>
+  <data name="ResetSpeed" xml:space="preserve"><value>重置速度</value></data>
+  <data name="Faster" xml:space="preserve"><value>加速</value></data>
+  <data name="Return" xml:space="preserve"><value>返回回放</value></data>
+  <data name="Settings" xml:space="preserve"><value>设置</value></data>
+  <data name="Shortcuts" xml:space="preserve"><value>快捷键</value></data>
+  <data name="ConfigureShortcuts" xml:space="preserve"><value>配置回放快捷键</value></data>
+  <data name="Exit" xml:space="preserve"><value>退出</value></data>
+  <data name="NotSaved" xml:space="preserve"><value>练习 · 不保存</value></data>
+  <data name="Replay" xml:space="preserve"><value>回放</value></data>
+  <data name="Restoring" xml:space="preserve"><value>正在恢复原回放…</value></data>
+  <data name="GetReady" xml:space="preserve"><value>准备接管</value></data>
+  <data name="PositionKeys" xml:space="preserve"><value>可移动光标、提前按键</value></data>
+  <data name="Preparing" xml:space="preserve"><value>准备接管：{0}</value></data>
+  <data name="PausedPreparation" xml:space="preserve"><value>已暂停 · 待准备</value></data>
+  <data name="Paused" xml:space="preserve"><value>已暂停</value></data>
+  <data name="Playing" xml:space="preserve"><value>播放中</value></data>
+  <data name="Finished" xml:space="preserve"><value>已结束</value></data>
+  <data name="Attempt" xml:space="preserve"><value>第 {0} 次尝试</value></data>
+  <data name="Statistics" xml:space="preserve"><value>准确率：{0}  Miss：{1}</value></data>
+  <data name="Start" xml:space="preserve"><value>起点：{0:0.000} 秒</value></data>
+  <data name="SafeStart" xml:space="preserve"><value>安全回退：{0:0.000} 秒 → {1:0.000} 秒</value></data>
+  <data name="History" xml:space="preserve"><value>尝试次数：{0}  |  {1}</value></data>
+  <data name="NavigationHint" xml:space="preserve"><value>默认键位：A/D 物件 · Q/E 前后 1 秒 · W/S 调速 · F 重置速度 · 空格 暂停 · Ctrl+Enter 接管</value></data>
+  <data name="FreezeFrame" xml:space="preserve"><value>冻结当前帧并接管</value></data>
+  <data name="PracticeTitle" xml:space="preserve"><value>回放接管练习</value></data>
+  <data name="SafeStartOption" xml:space="preserve"><value>回退到安全起点（可选）</value></data>
+  <data name="ExactHelp" xml:space="preserve"><value>冻结当前帧，准备 3 秒后接管。不回退，不保存成绩或回放。</value></data>
+  <data name="SafeHelp" xml:space="preserve"><value>回退到物件预读前，准备 3 秒后接管。不保存成绩或回放。</value></data>
+  <data name="BeatmapNotLoaded" xml:space="preserve"><value>无法加载谱面。</value></data>
+  <data name="ViewerUnavailable" xml:space="preserve"><value>当前回放观看方式不支持接管。</value></data>
+  <data name="BeatmapMismatch" xml:space="preserve"><value>当前谱面与回放不匹配。请先恢复匹配的谱面。</value></data>
+  <data name="IncompleteReplay" xml:space="preserve"><value>接管需要完整且非空的回放。</value></data>
+  <data name="WaitingForSeek" xml:space="preserve"><value>正在等待回放定位完成…</value></data>
+  <data name="SeekBeforeTakeover" xml:space="preserve"><value>请先定位到回放结束前再接管。</value></data>
+  <data name="StandardOnly" xml:space="preserve"><value>回放接管目前仅支持 osu!standard。</value></data>
+  <data name="UnknownMod" xml:space="preserve"><value>此回放含有未知 Mod，无法安全接管。</value></data>
+  <data name="AutomaticMod" xml:space="preserve"><value>此回放的 {0} 会自动操作。保留它会继续自动操作，移除它又会改变回放规则，因此暂不支持手动接管。</value></data>
+  <data name="TakeOverAction" xml:space="preserve"><value>接管回放</value></data>
+  <data name="RetryAction" xml:space="preserve"><value>重试回放练习</value></data>
+  <data name="ReturnAction" xml:space="preserve"><value>返回回放</value></data>
+  <data name="PreviousObjectAction" xml:space="preserve"><value>回放 / 练习：上一物件（出现时刻）</value></data>
+  <data name="NextObjectAction" xml:space="preserve"><value>回放 / 练习：下一物件（出现时刻）</value></data>
+  <data name="BackwardSecondAction" xml:space="preserve"><value>回放 / 练习：后退 1 秒</value></data>
+  <data name="ForwardSecondAction" xml:space="preserve"><value>回放 / 练习：前进 1 秒</value></data>
+  <data name="IncreaseSpeedAction" xml:space="preserve"><value>回放 / 练习：加速</value></data>
+  <data name="DecreaseSpeedAction" xml:space="preserve"><value>回放 / 练习：减速</value></data>
+  <data name="ResetSpeedAction" xml:space="preserve"><value>回放 / 练习：重置速度</value></data>
+  <data name="ExitAction" xml:space="preserve"><value>退出回放或练习</value></data>
+  <data name="PauseAction" xml:space="preserve"><value>暂停 / 继续回放或练习</value></data>
+  <data name="ObjectStartOption" xml:space="preserve"><value>从选中物件练习（忽略之前的物件）</value></data>
+  <data name="ObjectRangeHelp" xml:space="preserve"><value>物件定位会选中具体编号。练习时移除之前的物件（包括未结束的滑条），按练习范围重置成绩与血量，不补完美判定。任意时刻接管仍恢复原现场。</value></data>
+  <data name="ObjectSelected" xml:space="preserve"><value>物件 #{0} · 练习时忽略之前物件</value></data>
+  <data name="ObjectSelectedExact" xml:space="preserve"><value>物件 #{0} · 保留原现场</value></data>
+  <data name="TakeOverObject" xml:space="preserve"><value>从该物件练习</value></data>
+  <data name="DragPanel" xml:space="preserve"><value>拖动菜单 · 右下角调整大小</value></data>
+  <data name="NextMiss" xml:space="preserve"><value>下一个 Miss</value></data>
+  <data name="PreviousMiss" xml:space="preserve"><value>上一个 Miss</value></data>
+  <data name="PreviousIgnored" xml:space="preserve"><value>上一个忽略</value></data>
+  <data name="PreviousMissHelp" xml:space="preserve"><value>查找原回放中上一个断连判定（包含滑条断连），并选中其所属物件的出现时刻。</value></data>
+  <data name="PreviousIgnoredHelp" xml:space="preserve"><value>查找原回放中上一个不会断连、但少增加 combo 的判定，例如没接住滑条尾。不是过滤所有 IgnoreHit 或准确率变化。</value></data>
+  <data name="NoPreviousMiss" xml:space="preserve"><value>原回放前面没有 Miss</value></data>
+  <data name="NoPreviousIgnored" xml:space="preserve"><value>原回放前面没有少加 combo 的判定</value></data>
+  <data name="PreviousMissAction" xml:space="preserve"><value>回放 / 练习：原回放上一个 Miss</value></data>
+  <data name="PreviousIgnoredAction" xml:space="preserve"><value>回放 / 练习：原回放上一个忽略（少加 combo）</value></data>
+  <data name="NextIgnored" xml:space="preserve"><value>下一个忽略</value></data>
+  <data name="NextMissHelp" xml:space="preserve"><value>查找原回放中下一个断连判定（包含滑条断连），并选中其所属物件的出现时刻。</value></data>
+  <data name="NextIgnoredHelp" xml:space="preserve"><value>查找原回放中不会断连、但少增加 combo 的判定，例如没接住滑条尾。不是过滤所有 IgnoreHit 或准确率变化。</value></data>
+  <data name="AnalysingReplay" xml:space="preserve"><value>正在分析原回放判定…</value></data>
+  <data name="NoNextMiss" xml:space="preserve"><value>原回放后面没有 Miss</value></data>
+  <data name="NoNextIgnored" xml:space="preserve"><value>原回放后面没有少加 combo 的判定</value></data>
+  <data name="FailureAnalysisUnavailable" xml:space="preserve"><value>无法分析此回放的判定</value></data>
+  <data name="NextMissAction" xml:space="preserve"><value>回放 / 练习：原回放下一个 Miss</value></data>
+  <data name="NextIgnoredAction" xml:space="preserve"><value>回放 / 练习：原回放下一个忽略（少加 combo）</value></data>
+  <data name="AutoplayBaseline" xml:space="preserve"><value>自动生成基线</value></data>
+  <data name="AutoplayPractice" xml:space="preserve"><value>自动基线练习 · 不保存</value></data>
+  <data name="AutoplayBaselineHelp" xml:space="preserve"><value>这是自动生成的练习基线，不是你之前那次游玩的回放。接管时移除 Autoplay，其他 Mods 保留；准备结束后只使用真实输入。</value></data>
+</root>

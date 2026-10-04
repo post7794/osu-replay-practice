@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using osu.Framework.Localisation;
@@ -245,9 +245,9 @@ namespace osu.Game.Localisation
         public static LocalisableString NextSkin => new TranslatableString(getKey(@"next_skin"), @"Next skin");
 
         /// <summary>
-        /// "Pause / resume replay"
+        /// "Pause / resume replay or practice"
         /// </summary>
-        public static LocalisableString TogglePauseReplay => new TranslatableString(getKey(@"toggle_pause_replay"), @"Pause / resume replay");
+        public static LocalisableString TogglePauseReplay => new TranslatableString(getKey(@"toggle_pause_replay"), @"Pause / resume replay or practice");
 
         /// <summary>
         /// "Toggle in-game interface"
@@ -499,6 +499,102 @@ namespace osu.Game.Localisation
         /// </summary>
         public static LocalisableString EditorDiscardUnsavedChanges => new TranslatableString(getKey(@"editor_discard_unsaved_changes"), @"Discard unsaved changes...");
 
-        private static string getKey(string key) => $@"{prefix}:{key}";
+        /// <summary>
+        /// "Take over replay"
+        /// </summary>
+        public static LocalisableString TakeOverReplay => new TranslatableString(getKey(@"take_over_replay"), @"Take over replay");
+
+        /// <summary>
+        /// "Retry replay practice"
+        /// </summary>
+        public static LocalisableString RetryReplayPractice => new TranslatableString(getKey(@"retry_replay_practice"), @"Retry replay practice");
+
+        /// <summary>
+        /// "Return to replay"
+        /// </summary>
+        public static LocalisableString ReturnToReplay => new TranslatableString(getKey(@"return_to_replay"), @"Return to replay");
+
+        /// <summary>
+        /// "Previous replay / practice object"
+        /// </summary>
+        public static LocalisableString PreviousReplayObject => new TranslatableString(getKey(@"previous_replay_object"), @"Previous replay / practice object");
+
+        /// <summary>
+        /// "Next replay / practice object"
+        /// </summary>
+        public static LocalisableString NextReplayObject => new TranslatableString(getKey(@"next_replay_object"), @"Next replay / practice object");
+
+        /// <summary>
+        /// "Seek replay / practice backward one second"
+        /// </summary>
+        public static LocalisableString SeekReplayOneSecondBackward => new TranslatableString(getKey(@"seek_replay_one_second_backward"), @"Seek replay / practice backward one second");
+
+        /// <summary>
+        /// "Seek replay / practice forward one second"
+        /// </summary>
+        public static LocalisableString SeekReplayOneSecondForward => new TranslatableString(getKey(@"seek_replay_one_second_forward"), @"Seek replay / practice forward one second");
+
+        /// <summary>
+        /// "Increase replay / practice speed"
+        /// </summary>
+        public static LocalisableString IncreaseReplayPlaybackSpeed => new TranslatableString(getKey(@"increase_replay_playback_speed"), @"Increase replay / practice speed");
+
+        /// <summary>
+        /// "Decrease replay / practice speed"
+        /// </summary>
+        public static LocalisableString DecreaseReplayPlaybackSpeed => new TranslatableString(getKey(@"decrease_replay_playback_speed"), @"Decrease replay / practice speed");
+
+        /// <summary>
+        /// "Reset replay / practice speed"
+        /// </summary>
+        public static LocalisableString ResetReplayPlaybackSpeed => new TranslatableString(getKey(@"reset_replay_playback_speed"), @"Reset replay / practice speed");
+
+        /// <summary>
+        /// "Exit replay or practice"
+        /// </summary>
+        public static LocalisableString ExitReplay => new TranslatableString(getKey(@"exit_replay"), @"Exit replay or practice");
+
+        /// <summary>
+        /// "Next original replay miss"
+        /// </summary>
+        public static LocalisableString NextReplayMiss => new TranslatableString(getKey(@"next_replay_miss"), @"Next original replay miss");
+
+        /// <summary>
+        /// "Next original replay lost combo increment"
+        /// </summary>
+        public static LocalisableString NextReplayIgnored => new TranslatableString(getKey(@"next_replay_ignored"), @"Next original replay lost combo increment");
+
+        /// <summary>
+        /// "Previous original replay miss"
+        /// </summary>
+        public static LocalisableString PreviousReplayMiss => new TranslatableString(getKey(@"previous_replay_miss"), @"Previous original replay miss");
+
+        /// <summary>
+        /// "Previous original replay lost combo increment"
+        /// </summary>
+        public static LocalisableString PreviousReplayIgnored => new TranslatableString(getKey(@"previous_replay_ignored"), @"Previous original replay lost combo increment");
+
+        // New replay/practice translations ship in this assembly rather than waiting for osu-resources.
+        // Keep the conventional getKey() syntax required by the localisation analyser.
+        private static string getKey(string key) => key switch
+        {
+            @"toggle_pause_replay" => ReplayPracticeStrings.GetKey(nameof(ReplayPracticeStrings.PauseAction)),
+            @"take_over_replay" => ReplayPracticeStrings.GetKey(nameof(ReplayPracticeStrings.TakeOverAction)),
+            @"retry_replay_practice" => ReplayPracticeStrings.GetKey(nameof(ReplayPracticeStrings.RetryAction)),
+            @"return_to_replay" => ReplayPracticeStrings.GetKey(nameof(ReplayPracticeStrings.ReturnAction)),
+            @"previous_replay_object" => ReplayPracticeStrings.GetKey(nameof(ReplayPracticeStrings.PreviousObjectAction)),
+            @"next_replay_object" => ReplayPracticeStrings.GetKey(nameof(ReplayPracticeStrings.NextObjectAction)),
+            @"seek_replay_one_second_backward" => ReplayPracticeStrings.GetKey(nameof(ReplayPracticeStrings.BackwardSecondAction)),
+            @"seek_replay_one_second_forward" => ReplayPracticeStrings.GetKey(nameof(ReplayPracticeStrings.ForwardSecondAction)),
+            @"increase_replay_playback_speed" => ReplayPracticeStrings.GetKey(nameof(ReplayPracticeStrings.IncreaseSpeedAction)),
+            @"decrease_replay_playback_speed" => ReplayPracticeStrings.GetKey(nameof(ReplayPracticeStrings.DecreaseSpeedAction)),
+            @"reset_replay_playback_speed" => ReplayPracticeStrings.GetKey(nameof(ReplayPracticeStrings.ResetSpeedAction)),
+            @"exit_replay" => ReplayPracticeStrings.GetKey(nameof(ReplayPracticeStrings.ExitAction)),
+            @"next_replay_miss" => ReplayPracticeStrings.GetKey(nameof(ReplayPracticeStrings.NextMissAction)),
+            @"next_replay_ignored" => ReplayPracticeStrings.GetKey(nameof(ReplayPracticeStrings.NextIgnoredAction)),
+            @"previous_replay_miss" => ReplayPracticeStrings.GetKey(nameof(ReplayPracticeStrings.PreviousMissAction)),
+            @"previous_replay_ignored" => ReplayPracticeStrings.GetKey(nameof(ReplayPracticeStrings.PreviousIgnoredAction)),
+            _ => $@"{prefix}:{key}",
+        };
     }
 }

@@ -11,14 +11,34 @@ namespace osu.Game.Screens.Play
     {
         public readonly ScoreInfo Score;
 
+        private readonly ReplayPlaybackSession playback;
+
+        internal ReplayPracticeSession? PracticeSession => playback.Practice;
+
+        protected override bool ShowQuickRestartTransition => playback.Practice == null;
+
         public ReplayPlayerLoader(Score score)
-            : base(() => new ReplayPlayer(score))
+            : this(new ReplayPlaybackSession(score))
         {
+        }
+
+        private ReplayPlayerLoader(ReplayPlaybackSession playback)
+            : base(playback.CreatePlayer)
+        {
+            this.playback = playback;
+            var score = playback.Source;
             if (score.Replay == null)
                 throw new ArgumentException($"{nameof(score)} must have a non-null {nameof(score.Replay)}.", nameof(score));
 
             Score = score.ScoreInfo;
             WindowShouldBeActiveForGameplayStart = false;
+        }
+
+        public override void OnResuming(ScreenTransitionEvent e)
+        {
+            if (playback.ModsForNextPlayer is { } mods)
+                Mods.Value = mods;
+            base.OnResuming(e);
         }
 
         public override void OnEntering(ScreenTransitionEvent e)

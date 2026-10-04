@@ -173,6 +173,10 @@ namespace osu.Game.Screens.Play
 
         protected bool QuickRestart { get; private set; }
 
+        protected virtual bool ShowQuickRestartTransition => true;
+
+        private bool seamlessQuickRestart;
+
         private IDisposable? highPerformanceSession;
 
         [Resolved]
@@ -403,7 +407,8 @@ namespace osu.Game.Screens.Play
             playerConsumed = false;
             cancelLoad();
 
-            sampleRestart.Play();
+            if (!seamlessQuickRestart)
+                sampleRestart.Play();
 
             contentIn();
         }
@@ -454,6 +459,12 @@ namespace osu.Game.Screens.Play
             base.LogoArriving(logo, resuming);
 
             osuLogo = logo;
+
+            if (seamlessQuickRestart)
+            {
+                logo.Hide();
+                return;
+            }
 
             const double duration = 300;
 
@@ -570,6 +581,8 @@ namespace osu.Game.Screens.Play
         private void prepareForRestart(bool quickRestartRequested)
         {
             QuickRestart = quickRestartRequested;
+            // Capture before creating a new player can consume or clear its training session.
+            seamlessQuickRestart = QuickRestart && !ShowQuickRestartTransition;
             hideOverlays = true;
             ValidForResume = true;
             // when retrying, it is desired to refetch the global state leaderboard so that the user's previous score can show up on the leaderboard, if it needs to.
@@ -582,6 +595,18 @@ namespace osu.Game.Screens.Play
         private void contentIn(double delayBeforeSideDisplays = 0)
         {
             MetadataInfo.Loading = true;
+
+            if (seamlessQuickRestart)
+            {
+                // Rebuild the full practice graph without a blackout, metadata/scale animation or audio filter sweep.
+                quickRestartBackButtonRestore?.Cancel();
+                BackButtonVisibility.Value = true;
+                content.Hide();
+                sideContent.Hide();
+                disclaimers.Hide();
+                prepareNewPlayer();
+                return;
+            }
 
             if (QuickRestart)
             {
@@ -731,7 +756,7 @@ namespace osu.Game.Screens.Play
                 },
                 // When a quick restart is activated, the metadata content will display some time later if it's taking too long.
                 // To avoid it appearing too briefly, if it begins to fade in let's induce a standard delay.
-                QuickRestart && content.Alpha == 0 ? 0 : 500);
+                seamlessQuickRestart || (QuickRestart && content.Alpha == 0) ? 0 : 500);
         }
 
         private void cancelLoad()

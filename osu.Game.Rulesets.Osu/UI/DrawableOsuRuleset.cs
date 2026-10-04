@@ -8,6 +8,9 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Input;
+using osu.Framework.Timing;
+using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Beatmaps;
 using osu.Game.Input.Handlers;
 using osu.Game.Replays;
@@ -16,6 +19,7 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Osu.Configuration;
 using osu.Game.Rulesets.Osu.Mods;
 using osu.Game.Rulesets.Osu.Objects;
+using osu.Game.Rulesets.Osu.Objects.Drawables;
 using osu.Game.Rulesets.Osu.Replays;
 using osu.Game.Rulesets.UI;
 using osu.Game.Scoring;
@@ -24,7 +28,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Osu.UI
 {
-    public partial class DrawableOsuRuleset : DrawableRuleset<OsuHitObject>
+    public partial class DrawableOsuRuleset : DrawableRuleset<OsuHitObject>, IReplayPracticeRuleset
     {
         private Bindable<bool>? cursorHideEnabled;
 
@@ -42,7 +46,7 @@ namespace osu.Game.Rulesets.Osu.UI
         [BackgroundDependencyLoader]
         private void load(ReplayPlayer? replayPlayer)
         {
-            if (replayPlayer != null)
+            if (replayPlayer != null && replayPlayer.IsReplayRuleset(this))
             {
                 ReplayAnalysisOverlay analysisOverlay;
                 PlayfieldAdjustmentContainer.Add(analysisOverlay = new ReplayAnalysisOverlay(replayPlayer.Score.Replay));
@@ -75,9 +79,164 @@ namespace osu.Game.Rulesets.Osu.UI
             return new OsuResumeOverlay();
         }
 
-        protected override ReplayInputHandler CreateReplayInputHandler(Replay replay) => new OsuFramedReplayInputHandler(replay);
+        private bool creatingFailureAnalysisHandler;
+
+        protected override ReplayInputHandler CreateReplayInputHandler(Replay replay)
+            => creatingFailureAnalysisHandler
+                ? new OsuReplayFailureAnalysisInputHandler(replay, Beatmap.HitObjects)
+                : new OsuFramedReplayInputHandler(replay);
+
+        public void SetReplayScoreForFailureAnalysis(Score score)
+        {
+            // Scope the special handler to this load. Normal playback and takeover restoration
+            // must still use the native handler, even if this ruleset later loads another replay.
+            creatingFailureAnalysisHandler = true;
+            try
+            {
+                SetReplayScore(score);
+            }
+            finally
+            {
+                creatingFailureAnalysisHandler = false;
+            }
+        }
 
         protected override ReplayRecorder CreateReplayRecorder(Score score) => new OsuReplayRecorder(score);
+
+        private int? previewObjectIndex;
+        private readonly Dictionary<Drawable, float> previewAlphas = new Dictionary<Drawable, float>();
+
+        public void SetReplayObjectPreview(int? objectIndex)
+        {
+            if (previewObjectIndex == objectIndex)
+                return;
+            restorePreviewAlphas();
+            previewObjectIndex = objectIndex;
+        }
+
+        protected override void Update()
+        {
+            // Undo last frame's presentation-only override before any gameplay or pooling update.
+            restorePreviewAlphas();
+            base.Update();
+        }
+
+        protected override void UpdateAfterChildren()
+        {
+            base.UpdateAfterChildren();
+            if (FrameStableClock.IsRunning || previewObjectIndex is not int index || index < 0 || index >= Beatmap.HitObjects.Count)
+                return;
+
+            var obj = Beatmap.HitObjects[index];
+            if (Math.Abs(FrameStableClock.CurrentTime - ReplayTransport.ObjectAppearanceTime(obj)) >= 0.001)
+                return;
+
+            // At the exact preempt boundary the native fade starts at alpha zero and cannot advance while paused.
+            // Keep the original timestamp, geometry, skin, transforms and judgements; reveal only its frozen preview.
+            var drawable = Playfield.HitObjectContainer.AliveObjects.FirstOrDefault(d => d.HitObject == obj);
+            if (drawable == null || drawable.Judged)
+                return;
+
+            showPreview(drawable, 1);
+            switch (drawable)
+            {
+                case DrawableHitCircle circle:
+                    showCircle(circle);
+                    break;
+                case DrawableSlider slider:
+                    showCircle(slider.HeadCircle);
+                    showPreview(slider.Body, 0.4f);
+                    break;
+                case DrawableSpinner spinner:
+                    showPreview(spinner.Body, 0.4f);
+                    break;
+            }
+
+            void showCircle(DrawableHitCircle circle)
+            {
+                showPreview(circle, 1);
+                showPreview(circle.CirclePiece, 0.4f);
+                // Hidden's intentionally absent approach circle must stay hidden.
+                if (!Mods.Any(m => m is OsuModHidden))
+                    showPreview(circle.ApproachCircle, 0.4f);
+            }
+        }
+
+        private void showPreview(Drawable drawable, float minimumAlpha)
+        {
+            previewAlphas.TryAdd(drawable, drawable.Alpha);
+            drawable.Alpha = Math.Max(drawable.Alpha, minimumAlpha);
+        }
+
+        private void restorePreviewAlphas()
+        {
+            foreach (var (drawable, alpha) in previewAlphas)
+                drawable.Alpha = alpha;
+            previewAlphas.Clear();
+        }
+
+        public ReplayPracticeRange PrepareObjectPractice(int startingObjectIndex)
+        {
+            if (startingObjectIndex < 0 || startingObjectIndex >= Beatmap.HitObjects.Count)
+                throw new ArgumentOutOfRangeException(nameof(startingObjectIndex));
+
+            // Clone only the list. These are this independent Player's converted objects, never source beatmap objects.
+            // Do not reconvert, restack, reapply mods or synthesize perfect results for the discarded prefix.
+            var range = (Beatmap<OsuHitObject>)Beatmap.Clone();
+            range.HitObjects = Beatmap.HitObjects.Skip(startingObjectIndex).ToList();
+            var retained = new HashSet<HitObject>();
+            foreach (var obj in range.HitObjects)
+                includeNested(obj);
+            var results = Playfield.GetJudgedResults().Where(r => retained.Contains(r.HitObject)).ToArray();
+            foreach (var obj in Beatmap.HitObjects.Take(startingObjectIndex).ToArray())
+                RemoveHitObject(obj);
+            return new ReplayPracticeRange(range, results);
+
+            void includeNested(HitObject obj)
+            {
+                retained.Add(obj);
+                foreach (var nested in obj.NestedHitObjects)
+                    includeNested(nested);
+            }
+        }
+
+        public bool IsReplayPracticeReady(double time)
+        {
+            var handler = (OsuFramedReplayInputHandler?)KeyBindingInputManager.ReplayInputHandler;
+            return handler != null && Math.Abs(FrameStableClock.CurrentTime - time) < 0.001
+                                   && (handler.NextFrame == null || handler.NextFrame.Time > time);
+        }
+
+        public double GetSafeReplayPracticeTime(double requestedTime)
+        {
+            var next = Objects.Cast<OsuHitObject>().FirstOrDefault(h => h.GetEndTime() + h.HitWindows.WindowFor(HitResult.Miss) >= requestedTime);
+            if (next == null)
+                return requestedTime;
+            double time = Math.Min(requestedTime, next.StartTime - Math.Max(next.TimePreempt, next.HitWindows.WindowFor(HitResult.Miss)) - 1);
+            // An earlier object may still cross this point. Never select a point inside a long object or hit window.
+            bool changed;
+            do
+            {
+                changed = false;
+                foreach (var obj in Objects.Cast<OsuHitObject>())
+                {
+                    double window = obj.HitWindows.WindowFor(HitResult.Miss);
+                    if (obj.StartTime - window <= time && obj.GetEndTime() + window >= time)
+                    {
+                        time = obj.StartTime - Math.Max(obj.TimePreempt, window) - 1;
+                        changed = true;
+                    }
+                }
+            } while (changed);
+            return time;
+        }
+
+        public ReplayPracticePreparation CreateReplayPracticePreparation(IFrameBasedClock clock)
+        {
+            var preparation = new OsuReplayPracticePreparation(this) { Clock = clock };
+            AddInternal(preparation);
+            return preparation;
+        }
 
         public override double GameplayStartTime
         {

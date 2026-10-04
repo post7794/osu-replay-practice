@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
@@ -41,6 +41,9 @@ namespace osu.Desktop
         public OsuGameDesktop(string[]? args = null)
             : base(args)
         {
+#if REPLAY_PRACTICE_TEST_BUILD
+            Name = "osu! Replay Practice (test)";
+#endif
         }
 
         public override StableStorage? GetStorageForStableInstall()
@@ -105,7 +108,13 @@ namespace osu.Desktop
                 return key?.OpenSubKey(WindowsAssociationManager.SHELL_OPEN_COMMAND)?.GetValue(string.Empty)?.ToString()?.Split('"')[1].Replace("osu!.exe", "");
         }
 
-        public static bool IsPackageManaged => !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("OSU_EXTERNAL_UPDATE_PROVIDER"));
+        public static bool IsPackageManaged =>
+#if REPLAY_PRACTICE_TEST_BUILD
+            // A loose test bundle must never register associations or update to the official client.
+            true;
+#else
+            !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("OSU_EXTERNAL_UPDATE_PROVIDER"));
+#endif
 
         protected override UpdateManager CreateUpdateManager()
         {

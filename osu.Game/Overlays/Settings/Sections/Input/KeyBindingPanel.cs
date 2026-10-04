@@ -35,7 +35,7 @@ namespace osu.Game.Overlays.Settings.Sections.Input
                 Children = new[]
                 {
                     new GlobalKeyBindingsSubsection(CommonStrings.General, GlobalActionCategory.InGame),
-                    new GlobalKeyBindingsSubsection(InputSettingsStrings.ReplaySection, GlobalActionCategory.Replay),
+                    new GlobalKeyBindingsSubsection(InputSettingsStrings.ReplaySection, GlobalActionCategory.Replay) { TrackExternalChanges = true },
                 }
             });
 

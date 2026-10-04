@@ -49,6 +49,13 @@ namespace osu.Game.Rulesets.Osu.Replays
             return new LegacyReplayFrame(Time, Position.X, Position.Y, state);
         }
 
+        public override ReplayFrame DeepClone()
+        {
+            var clone = (OsuReplayFrame)base.DeepClone();
+            clone.Actions = new List<OsuAction>(Actions);
+            return clone;
+        }
+
         public override bool IsEquivalentTo(ReplayFrame other)
             => other is OsuReplayFrame osuFrame && Time == osuFrame.Time && Position == osuFrame.Position && Actions.SequenceEqual(osuFrame.Actions);
     }

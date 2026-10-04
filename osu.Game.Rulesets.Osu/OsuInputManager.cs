@@ -1,11 +1,13 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Bindings;
 using osu.Framework.Input.Events;
+using osu.Framework.Input.States;
 using osu.Framework.Lists;
 using osu.Framework.Localisation;
 using osu.Game.Input.Bindings;
@@ -41,6 +43,15 @@ namespace osu.Game.Rulesets.Osu
         /// </summary>
         public bool AllowUserCursorMovement { get; set; } = true;
 
+        /// <summary>
+        /// Records held physical actions without dispatching an old press to hit objects during takeover.
+        /// </summary>
+        internal bool SuppressReplayTakeoverPresses
+        {
+            get => ((OsuKeyBindingContainer)KeyBindingContainer).SuppressPresses;
+            set => ((OsuKeyBindingContainer)KeyBindingContainer).SuppressPresses = value;
+        }
+
         protected override KeyBindingContainer<OsuAction> CreateKeyBindingContainer(RulesetInfo ruleset, int variant, SimultaneousBindingMode unique)
             => new OsuKeyBindingContainer(ruleset, variant, unique);
 
@@ -72,6 +83,10 @@ namespace osu.Game.Rulesets.Osu
         private partial class OsuKeyBindingContainer : RulesetKeyBindingContainer
         {
             private bool allowGameplayInputs = true;
+            public bool SuppressPresses { get; set; }
+
+            protected override Drawable PropagatePressed(IEnumerable<Drawable> drawables, InputState state, OsuAction pressed, float scrollAmount = 0, bool isPrecise = false, bool repeat = false)
+                => base.PropagatePressed(SuppressPresses ? Enumerable.Empty<Drawable>() : drawables, state, pressed, scrollAmount, isPrecise, repeat);
 
             /// <summary>
             /// Whether gameplay input buttons should be allowed.

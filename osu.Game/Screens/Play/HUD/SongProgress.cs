@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
@@ -85,7 +85,9 @@ namespace osu.Game.Screens.Play.HUD
         {
             if (drawableRuleset != null)
             {
-                if (player?.Configuration.AllowUserInteraction == true)
+                if (player is ReplayPracticePlayer)
+                    Interactive.Value = true;
+                else if (player?.Configuration.AllowUserInteraction == true)
                     ((IBindable<bool>)Interactive).BindTo(drawableRuleset.HasReplayLoaded);
 
                 Objects = drawableRuleset.Objects;

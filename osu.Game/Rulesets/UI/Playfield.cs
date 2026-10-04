@@ -114,6 +114,12 @@ namespace osu.Game.Rulesets.UI
         private readonly Stack<HitObjectLifetimeEntry> judgedEntries;
 
         /// <summary>
+        /// Snapshot already-applied results in their original application order.
+        /// Used when an independent practice branch restricts its scoring range after replay restoration.
+        /// </summary>
+        public IReadOnlyList<JudgementResult> GetJudgedResults() => judgedEntries.Reverse().Select(e => e.Result).ToArray();
+
+        /// <summary>
         /// Creates a new <see cref="Playfield"/>.
         /// </summary>
         protected Playfield()

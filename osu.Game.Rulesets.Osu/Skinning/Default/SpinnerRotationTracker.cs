@@ -110,6 +110,13 @@ namespace osu.Game.Rulesets.Osu.Skinning.Default
             drawableSpinner.Result.History.ReportDelta(Time.Current, delta);
         }
 
+        public void RebaseForReplayTakeover(Vector2 screenSpacePosition)
+        {
+            mousePosition = Parent!.ToLocalSpace(screenSpacePosition);
+            Vector2 pos = mousePosition.Value;
+            lastAngle = -float.RadiansToDegrees(MathF.Atan2(pos.X - DrawSize.X / 2, pos.Y - DrawSize.Y / 2));
+        }
+
         private void resetState(DrawableHitObject obj)
         {
             Tracking = false;

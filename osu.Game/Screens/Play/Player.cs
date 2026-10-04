@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 #nullable disable
@@ -269,9 +269,10 @@ namespace osu.Game.Screens.Play
 
             dependencies.CacheAs(HealthProcessor);
 
+            GameplayClockContainer = CreateGameplayClockContainer(Beatmap.Value, DrawableRuleset.GameplayStartTime);
             InternalChildren = new Drawable[]
             {
-                GameplayClockContainer = CreateGameplayClockContainer(Beatmap.Value, DrawableRuleset.GameplayStartTime),
+                CreateGameplayPresentationContainer(GameplayClockContainer),
             };
 
             AddInternal(screenSuspension = new ScreenSuspensionHandler(GameplayClockContainer));
@@ -409,10 +410,10 @@ namespace osu.Game.Screens.Play
                 ScoreProcessor.RevertResult(r);
             };
 
-            DimmableStoryboard.HasStoryboardEnded.ValueChanged += _ => checkScoreCompleted();
+            DimmableStoryboard.HasStoryboardEnded.ValueChanged += _ => CheckScoreCompleted();
 
             // Bind the judgement processors to ourselves
-            ScoreProcessor.HasCompleted.BindValueChanged(_ => checkScoreCompleted());
+            ScoreProcessor.HasCompleted.BindValueChanged(_ => CheckScoreCompleted());
             HealthProcessor.Failed += onFail;
 
             // Provide judgement processors to mods after they're loaded so that they're on the gameplay clock,
@@ -434,6 +435,10 @@ namespace osu.Game.Screens.Play
         }
 
         protected virtual GameplayClockContainer CreateGameplayClockContainer(WorkingBeatmap beatmap, double gameplayStart) => new MasterGameplayClockContainer(beatmap, gameplayStart);
+
+        // Normal gameplay retains its original hierarchy and presentation. Replay players can
+        // independently hide history reconstruction without pausing or skipping the clock tree.
+        protected virtual Container CreateGameplayPresentationContainer(GameplayClockContainer gameplay) => gameplay;
 
         private Drawable createUnderlayComponents(WorkingBeatmap working)
         {
@@ -677,7 +682,7 @@ namespace osu.Game.Screens.Play
         /// </remarks>
         /// <param name="skipTransition">Whether the exit should perform without a transition, because the screen had faded to black already.</param>
         /// <returns>Whether this call resulted in a final exit.</returns>
-        protected bool PerformExit(bool skipTransition = false)
+        protected virtual bool PerformExit(bool skipTransition = false)
         {
             // Matching osu!stable behaviour, if the results screen is pending and the user requests an exit,
             // show the results instead.
@@ -735,7 +740,7 @@ namespace osu.Game.Screens.Play
         /// Seek to a specific time in gameplay.
         /// </summary>
         /// <param name="time">The destination time to seek to.</param>
-        public void Seek(double time) => GameplayClockContainer.Seek(time);
+        public virtual void Seek(double time) => GameplayClockContainer.Seek(time);
 
         private ScheduledDelegate frameStablePlaybackResetDelegate;
 
@@ -766,7 +771,7 @@ namespace osu.Game.Screens.Play
         /// </summary>
         /// <param name="quickRestart">Whether a quick restart was requested (skipping intro etc.).</param>
         /// <returns>Whether this call resulted in a restart.</returns>
-        public bool Restart(bool quickRestart = false)
+        public virtual bool Restart(bool quickRestart = false)
         {
             if (!Configuration.AllowRestart)
                 return false;
@@ -802,7 +807,7 @@ namespace osu.Game.Screens.Play
         /// <summary>
         /// Handles changes in player state which may progress the completion of gameplay / this screen's lifetime.
         /// </summary>
-        private void checkScoreCompleted()
+        protected virtual void CheckScoreCompleted()
         {
             // If this player instance is in the middle of an exit, don't attempt any kind of state update.
             if (!this.IsCurrentScreen())
@@ -1110,6 +1115,8 @@ namespace osu.Game.Screens.Play
 
         #region Screen Logic
 
+        protected virtual bool ShowGameplayEntryTransition => true;
+
         public override void OnEntering(ScreenTransitionEvent e)
         {
             base.OnEntering(e);
@@ -1117,12 +1124,20 @@ namespace osu.Game.Screens.Play
             if (!LoadedBeatmapSuccessfully)
                 return;
 
-            Alpha = 0;
-            this
-                .ScaleTo(0.7f)
-                .ScaleTo(1, 750, Easing.OutQuint)
-                .Delay(250)
-                .FadeIn(250);
+            if (ShowGameplayEntryTransition)
+            {
+                Alpha = 0;
+                this
+                    .ScaleTo(0.7f)
+                    .ScaleTo(1, 750, Easing.OutQuint)
+                    .Delay(250)
+                    .FadeIn(250);
+            }
+            else
+            {
+                this.ScaleTo(1);
+                this.FadeIn();
+            }
 
             ApplyToBackground(b =>
             {
@@ -1156,7 +1171,10 @@ namespace osu.Game.Screens.Play
 
             updateGameplayState();
 
-            GameplayClockContainer.FadeInFromZero(750, Easing.OutQuint);
+            if (ShowGameplayEntryTransition)
+                GameplayClockContainer.FadeInFromZero(750, Easing.OutQuint);
+            else
+                GameplayClockContainer.FadeIn();
 
             StartGameplay();
             OnGameplayStarted?.Invoke();

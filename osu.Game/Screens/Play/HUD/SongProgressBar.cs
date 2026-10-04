@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
@@ -7,6 +7,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
 using osu.Framework.Threading;
 using osuTK;
+using osuTK.Input;
 
 namespace osu.Game.Screens.Play.HUD
 {
@@ -21,7 +22,20 @@ namespace osu.Game.Screens.Play.HUD
         /// <summary>
         /// The current (non-frame-stable) audio time.
         /// </summary>
-        protected double AudioTime => Math.Clamp(GameplayClock.CurrentTime - StartTime, 0.0, length);
+        protected double AudioTime => Math.Clamp(DisplayedTime - StartTime, 0.0, length);
+
+        [Resolved]
+        private Player? player { get; set; }
+
+        /// <summary>
+        /// Replay navigation has no cosmetic interpolation. Normal gameplay retains the skin's smoothing.
+        /// </summary>
+        protected bool ImmediateProgress => player is IReplayTransport;
+
+        public bool IsSeeking { get; private set; }
+        public double DisplayedTime => IsSeeking ? previewTime : GameplayClock.CurrentTime;
+        private double previewTime;
+        private bool practiceSeek;
 
         [Resolved]
         protected IGameplayClock GameplayClock { get; private set; } = null!;
@@ -47,11 +61,22 @@ namespace osu.Game.Screens.Play.HUD
         protected override bool OnMouseDown(MouseDownEvent e)
         {
             handleClick = true;
+            if (e.Button == MouseButton.Left && Interactive && player is IReplayTransport transport && transport.CanSeekTransport)
+            {
+                transport.BeginTransportSeek();
+                practiceSeek = player is ReplayPracticePlayer;
+                IsSeeking = true;
+                previewTime = transport.TransportTime;
+                handleMouseInput(e, true);
+                return true;
+            }
             return base.OnMouseDown(e);
         }
 
         protected override bool OnClick(ClickEvent e)
         {
+            if (player is IReplayTransport)
+                return true;
             if (handleClick)
                 handleMouseInput(e);
 
@@ -77,13 +102,38 @@ namespace osu.Game.Screens.Play.HUD
             return true;
         }
 
-        private void handleMouseInput(UIEvent e)
+        protected override void OnMouseUp(MouseUpEvent e)
+        {
+            base.OnMouseUp(e);
+            if (e.Button != MouseButton.Left || !IsSeeking)
+                return;
+            handleMouseInput(e);
+            IsSeeking = false;
+            if (practiceSeek)
+            {
+                double target = previewTime;
+                Schedule(() => ((IReplayTransport)player!).SeekTransport(target));
+            }
+        }
+
+        private void handleMouseInput(UIEvent e, bool forceSeek = false)
         {
             if (!Interactive)
                 return;
 
             double relativeX = Math.Clamp(ToLocalSpace(e.ScreenSpaceMousePosition).X / DrawWidth, 0, 1);
-            onUserChange(StartTime + (EndTime - StartTime) * relativeX);
+            double target = StartTime + (EndTime - StartTime) * relativeX;
+            if (player is IReplayTransport transport)
+            {
+                if (!IsSeeking || !transport.CanSeekTransport)
+                    return;
+                bool changed = previewTime != target;
+                previewTime = target;
+                if (!practiceSeek && (changed || forceSeek))
+                    transport.SeekTransport(target);
+            }
+            else
+                onUserChange(target);
         }
 
         private ScheduledDelegate? scheduledSeek;

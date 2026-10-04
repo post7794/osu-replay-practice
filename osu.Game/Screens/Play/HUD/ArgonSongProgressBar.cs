@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
@@ -117,14 +117,14 @@ namespace osu.Game.Screens.Play.HUD
         protected override bool OnHover(HoverEvent e)
         {
             if (Interactive)
-                this.ResizeHeightTo(barHeight * 3.5f, 200, Easing.Out);
+                this.ResizeHeightTo(barHeight * 3.5f, ImmediateProgress ? 0 : 200, Easing.Out);
 
             return base.OnHover(e);
         }
 
         protected override void OnHoverLost(HoverLostEvent e)
         {
-            this.ResizeHeightTo(barHeight, 800, Easing.OutQuint);
+            this.ResizeHeightTo(barHeight, ImmediateProgress ? 0 : 800, Easing.OutQuint);
             base.OnHoverLost(e);
         }
 
@@ -132,8 +132,10 @@ namespace osu.Game.Screens.Play.HUD
         {
             base.Update();
 
-            playfieldBar.Length = (float)Interpolation.Lerp(playfieldBar.Length, Progress, Math.Clamp(Time.Elapsed / 40, 0, 1));
-            audioBar.Length = (float)Interpolation.Lerp(audioBar.Length, AudioProgress, Math.Clamp(Time.Elapsed / 40, 0, 1));
+            playfieldBar.Length = ImmediateProgress ? (float)(IsSeeking ? AudioProgress : Progress)
+                : (float)Interpolation.Lerp(playfieldBar.Length, Progress, Math.Clamp(Time.Elapsed / 40, 0, 1));
+            audioBar.Length = ImmediateProgress ? (float)AudioProgress
+                : (float)Interpolation.Lerp(audioBar.Length, AudioProgress, Math.Clamp(Time.Elapsed / 40, 0, 1));
 
             if (trackTime > AudioTime)
                 ChangeInternalChildDepth(audioBar, -1);

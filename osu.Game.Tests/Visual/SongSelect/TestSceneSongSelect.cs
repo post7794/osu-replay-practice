@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
@@ -347,11 +347,43 @@ namespace osu.Game.Tests.Visual.SongSelect
 
             AddUntilStep("wait for player", () => Stack.CurrentScreen is PlayerLoader);
 
+            AddAssert("autoplay loader supports takeover", () => Stack.CurrentScreen is AutoplayReplayPlayerLoader);
             AddAssert("autoplay selected", () => SongSelect.Mods.Value.Single() is ModAutoplay);
 
             AddUntilStep("wait for return to ss", () => SongSelect.IsCurrentScreen());
 
             AddAssert("no mods selected", () => SongSelect.Mods.Value.Count == 0);
+        }
+
+        [Test]
+        public void TestAutoplayShortcutTakeoverAndExitRestoresInitialMods()
+        {
+            AddStep("import playable beatmap", () => Beatmaps.Import(TestResources.GetQuickTestBeatmapForImport()).WaitSafely());
+            LoadSongSelect();
+            AddStep("select beatmap", () => InputManager.Key(Key.Right));
+            AddAssert("beatmap selected", () => !Beatmap.IsDefault);
+            ChangeMods(new OsuModRelax());
+            AddStep("start autoplay with Ctrl+Enter", () =>
+            {
+                InputManager.PressKey(Key.ControlLeft);
+                InputManager.Key(Key.Enter);
+                InputManager.ReleaseKey(Key.ControlLeft);
+            });
+            AddUntilStep("autoplay viewer ready to take over", () => Stack.CurrentScreen is ReplayPlayer { IsLoaded: true } viewer
+                && viewer.ReplayPracticeUnavailableReason == null);
+            AddAssert("viewer labelled as generated autoplay", () => ((ReplayPlayer)Stack.CurrentScreen).IsAutoplayBaseline);
+            AddStep("take over with Ctrl+Enter", () =>
+            {
+                InputManager.PressKey(Key.ControlLeft);
+                InputManager.Key(Key.Enter);
+                InputManager.ReleaseKey(Key.ControlLeft);
+            });
+            AddUntilStep("autoplay practice preparation", () => Stack.CurrentScreen is ReplayPracticePlayer
+                { Session.State: ReplayPracticeState.Preparing });
+            AddAssert("AT removed from manual practice", () => !((Player)Stack.CurrentScreen).GameplayState.Mods.OfType<ModAutoplay>().Any());
+            AddStep("exit practice directly", () => ((ReplayPracticePlayer)Stack.CurrentScreen).QuitPractice());
+            AddUntilStep("back in song select", () => SongSelect.IsCurrentScreen());
+            AddAssert("original selection restored", () => SongSelect.Mods.Value.Single() is ModRelax);
         }
 
         [Test]

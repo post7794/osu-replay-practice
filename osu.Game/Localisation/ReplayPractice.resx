@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="PausePractice" xml:space="preserve"><value>Pause practice</value></data>
+  <data name="ResumePractice" xml:space="preserve"><value>Resume practice</value></data>
+  <data name="PauseReplay" xml:space="preserve"><value>Pause replay</value></data>
+  <data name="ResumeReplay" xml:space="preserve"><value>Resume replay</value></data>
+  <data name="Retry" xml:space="preserve"><value>Retry</value></data>
+  <data name="TakeOver" xml:space="preserve"><value>Take over now</value></data>
+  <data name="PreviousObject" xml:space="preserve"><value>&lt; Object</value></data>
+  <data name="NextObject" xml:space="preserve"><value>Object &gt;</value></data>
+  <data name="BackwardSecond" xml:space="preserve"><value>-1 sec</value></data>
+  <data name="ForwardSecond" xml:space="preserve"><value>+1 sec</value></data>
+  <data name="PreviousFrame" xml:space="preserve"><value>&lt; Frame</value></data>
+  <data name="NextFrame" xml:space="preserve"><value>Frame &gt;</value></data>
+  <data name="Slower" xml:space="preserve"><value>Slower</value></data>
+  <data name="ResetSpeed" xml:space="preserve"><value>Speed 1x</value></data>
+  <data name="Faster" xml:space="preserve"><value>Faster</value></data>
+  <data name="Return" xml:space="preserve"><value>Return to replay</value></data>
+  <data name="Settings" xml:space="preserve"><value>Settings</value></data>
+  <data name="Shortcuts" xml:space="preserve"><value>Shortcuts</value></data>
+  <data name="ConfigureShortcuts" xml:space="preserve"><value>Configure replay shortcuts</value></data>
+  <data name="Exit" xml:space="preserve"><value>Exit</value></data>
+  <data name="NotSaved" xml:space="preserve"><value>PRACTICE — NOT SAVED</value></data>
+  <data name="Replay" xml:space="preserve"><value>REPLAY</value></data>
+  <data name="Restoring" xml:space="preserve"><value>Restoring original replay...</value></data>
+  <data name="GetReady" xml:space="preserve"><value>GET READY</value></data>
+  <data name="PositionKeys" xml:space="preserve"><value>Position / hold keys</value></data>
+  <data name="Preparing" xml:space="preserve"><value>Get ready: {0}</value></data>
+  <data name="PausedPreparation" xml:space="preserve"><value>Paused — preparation pending</value></data>
+  <data name="Paused" xml:space="preserve"><value>Paused</value></data>
+  <data name="Playing" xml:space="preserve"><value>Playing</value></data>
+  <data name="Finished" xml:space="preserve"><value>Finished</value></data>
+  <data name="Attempt" xml:space="preserve"><value>Attempt {0}</value></data>
+  <data name="Statistics" xml:space="preserve"><value>Accuracy: {0}  Miss: {1}</value></data>
+  <data name="Start" xml:space="preserve"><value>Start: {0:0.000}s</value></data>
+  <data name="SafeStart" xml:space="preserve"><value>Safe-start rewind: {0:0.000}s -&gt; {1:0.000}s</value></data>
+  <data name="History" xml:space="preserve"><value>Attempts: {0}  |  {1}</value></data>
+  <data name="NavigationHint" xml:space="preserve"><value>Default keys — A/D: objects  |  Q/E: 1 second  |  W/S: speed  |  F: speed 1x  |  Space: pause  |  Ctrl+Enter: take over</value></data>
+  <data name="FreezeFrame" xml:space="preserve"><value>Freeze this frame and take over</value></data>
+  <data name="PracticeTitle" xml:space="preserve"><value>Replay takeover practice</value></data>
+  <data name="SafeStartOption" xml:space="preserve"><value>Rewind to a safe start (optional)</value></data>
+  <data name="ExactHelp" xml:space="preserve"><value>Freeze this frame, prepare for 3 seconds, then take over. No rewind. No score or replay will be saved.</value></data>
+  <data name="SafeHelp" xml:space="preserve"><value>Rewind to before the objects, then prepare for 3 seconds. No score or replay will be saved.</value></data>
+  <data name="BeatmapNotLoaded" xml:space="preserve"><value>The beatmap could not be loaded.</value></data>
+  <data name="ViewerUnavailable" xml:space="preserve"><value>Takeover is unavailable for this replay viewer.</value></data>
+  <data name="BeatmapMismatch" xml:space="preserve"><value>The loaded beatmap differs from the replay's beatmap. Restore the matching beatmap before taking over.</value></data>
+  <data name="IncompleteReplay" xml:space="preserve"><value>A complete, non-empty replay is required.</value></data>
+  <data name="WaitingForSeek" xml:space="preserve"><value>Waiting for replay seek to finish…</value></data>
+  <data name="SeekBeforeTakeover" xml:space="preserve"><value>Seek back into the replay before taking over.</value></data>
+  <data name="StandardOnly" xml:space="preserve"><value>Replay takeover currently supports osu!standard only.</value></data>
+  <data name="UnknownMod" xml:space="preserve"><value>This replay contains an unknown mod.</value></data>
+  <data name="AutomaticMod" xml:space="preserve"><value>{0} performs automatic gameplay. Keeping it would continue automation; removing it would change the replay's rules. Manual takeover is not supported.</value></data>
+  <data name="TakeOverAction" xml:space="preserve"><value>Take over replay</value></data>
+  <data name="RetryAction" xml:space="preserve"><value>Retry replay practice</value></data>
+  <data name="ReturnAction" xml:space="preserve"><value>Return to replay</value></data>
+  <data name="PreviousObjectAction" xml:space="preserve"><value>Previous replay / practice object</value></data>
+  <data name="NextObjectAction" xml:space="preserve"><value>Next replay / practice object</value></data>
+  <data name="BackwardSecondAction" xml:space="preserve"><value>Seek replay / practice backward one second</value></data>
+  <data name="ForwardSecondAction" xml:space="preserve"><value>Seek replay / practice forward one second</value></data>
+  <data name="IncreaseSpeedAction" xml:space="preserve"><value>Increase replay / practice speed</value></data>
+  <data name="DecreaseSpeedAction" xml:space="preserve"><value>Decrease replay / practice speed</value></data>
+  <data name="ResetSpeedAction" xml:space="preserve"><value>Reset replay / practice speed</value></data>
+  <data name="ExitAction" xml:space="preserve"><value>Exit replay or practice</value></data>
+  <data name="PauseAction" xml:space="preserve"><value>Pause / resume replay or practice</value></data>
+  <data name="ObjectStartOption" xml:space="preserve"><value>Start from selected object (ignore earlier objects)</value></data>
+  <data name="ObjectRangeHelp" xml:space="preserve"><value>Object navigation selects a numbered object. Practice removes earlier objects, including unfinished sliders, and resets score/health for this range. No perfect hits are awarded. Arbitrary-time takeover still restores the original scene.</value></data>
+  <data name="ObjectSelected" xml:space="preserve"><value>Object #{0} — earlier objects excluded in practice</value></data>
+  <data name="ObjectSelectedExact" xml:space="preserve"><value>Object #{0} — preserve original scene</value></data>
+  <data name="TakeOverObject" xml:space="preserve"><value>Practise selected object</value></data>
+  <data name="DragPanel" xml:space="preserve"><value>Drag menu / resize corner</value></data>
+  <data name="NextMiss" xml:space="preserve"><value>Next Miss</value></data>
+  <data name="PreviousMiss" xml:space="preserve"><value>Previous Miss</value></data>
+  <data name="PreviousIgnored" xml:space="preserve"><value>Previous ignored</value></data>
+  <data name="PreviousMissHelp" xml:space="preserve"><value>Find the previous original replay combo-breaking miss, including slider breaks, and select its object at appearance.</value></data>
+  <data name="PreviousIgnoredHelp" xml:space="preserve"><value>Find the previous original replay judgement that loses a combo increment without breaking combo, such as a dropped slider tail.</value></data>
+  <data name="NoPreviousMiss" xml:space="preserve"><value>No earlier Miss in the original replay</value></data>
+  <data name="NoPreviousIgnored" xml:space="preserve"><value>No earlier lost combo increment in the original replay</value></data>
+  <data name="PreviousMissAction" xml:space="preserve"><value>Replay / practice: previous original Miss</value></data>
+  <data name="PreviousIgnoredAction" xml:space="preserve"><value>Replay / practice: previous original lost combo increment</value></data>
+  <data name="NextIgnored" xml:space="preserve"><value>Next ignored</value></data>
+  <data name="NextMissHelp" xml:space="preserve"><value>Find the next original replay combo-breaking miss, including slider breaks, and select its object at appearance.</value></data>
+  <data name="NextIgnoredHelp" xml:space="preserve"><value>Find an original replay judgement that loses a combo increment without breaking combo, such as a dropped slider tail.</value></data>
+  <data name="AnalysingReplay" xml:space="preserve"><value>Analysing original replay…</value></data>
+  <data name="NoNextMiss" xml:space="preserve"><value>No later Miss in the original replay</value></data>
+  <data name="NoNextIgnored" xml:space="preserve"><value>No later lost combo increment in the original replay</value></data>
+  <data name="FailureAnalysisUnavailable" xml:space="preserve"><value>Replay judgement analysis unavailable</value></data>
+  <data name="NextMissAction" xml:space="preserve"><value>Replay / practice: next original Miss</value></data>
+  <data name="NextIgnoredAction" xml:space="preserve"><value>Replay / practice: next original lost combo increment</value></data>
+  <data name="AutoplayBaseline" xml:space="preserve"><value>AUTOPLAY BASELINE</value></data>
+  <data name="AutoplayPractice" xml:space="preserve"><value>AUTOPLAY PRACTICE — NOT SAVED</value></data>
+  <data name="AutoplayBaselineHelp" xml:space="preserve"><value>This is an automatically generated baseline, not your previous play. Takeover removes Autoplay and preserves the other mods. Only your input is used after preparation.</value></data>
+</root>

@@ -4,7 +4,9 @@
 using System;
 using System.IO;
 using System.Runtime.Versioning;
+#if !REPLAY_PRACTICE_TEST_BUILD
 using osu.Desktop.LegacyIpc;
+#endif
 using osu.Desktop.Windows;
 using osu.Framework;
 using osu.Framework.Development;
@@ -20,13 +22,17 @@ namespace osu.Desktop
 {
     public static class Program
     {
-#if DEBUG
+#if REPLAY_PRACTICE_TEST_BUILD
+        private const string base_game_name = @"osu-replay-practice-test";
+#elif DEBUG
         private const string base_game_name = @"osu-development";
 #else
         private const string base_game_name = @"osu";
 #endif
 
+#if !REPLAY_PRACTICE_TEST_BUILD
         private static LegacyTcpIpcProvider? legacyIpc;
+#endif
 
         private static bool isFirstRun;
 
@@ -104,8 +110,13 @@ namespace osu.Desktop
 
             var hostOptions = new HostOptions
             {
+#if REPLAY_PRACTICE_TEST_BUILD
+                IPCPipeName = !tournamentClient ? "osu-replay-practice-test" : null,
+                FriendlyGameName = "osu! Replay Practice (test)",
+#else
                 IPCPipeName = !tournamentClient ? OsuGame.IPC_PIPE_NAME : null,
                 FriendlyGameName = OsuGameBase.GAME_NAME,
+#endif
             };
 
             using (DesktopGameHost host = Host.GetSuitableDesktopHost(gameName, hostOptions))
@@ -123,6 +134,7 @@ namespace osu.Desktop
                     }
                 }
 
+#if !REPLAY_PRACTICE_TEST_BUILD
                 if (host.IsPrimaryInstance)
                 {
                     try
@@ -136,6 +148,7 @@ namespace osu.Desktop
                         Logger.Error(ex, "Failed to start legacy IPC provider");
                     }
                 }
+#endif
 
                 if (tournamentClient)
                     host.Run(new TournamentGame());

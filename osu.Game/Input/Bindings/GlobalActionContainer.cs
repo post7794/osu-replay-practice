@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
@@ -226,6 +226,21 @@ namespace osu.Game.Input.Bindings
             new KeyBinding(InputKey.Comma, GlobalAction.StepReplayBackward),
             new KeyBinding(InputKey.Period, GlobalAction.StepReplayForward),
             new KeyBinding(new[] { InputKey.Control, InputKey.H }, GlobalAction.ToggleReplaySettings),
+            new KeyBinding(new[] { InputKey.Control, InputKey.Enter }, GlobalAction.TakeOverReplay),
+            new KeyBinding(new[] { InputKey.Control, InputKey.Shift, InputKey.Enter }, GlobalAction.RetryReplayPractice),
+            new KeyBinding(new[] { InputKey.Control, InputKey.BackSpace }, GlobalAction.ReturnToReplay),
+            new KeyBinding(InputKey.A, GlobalAction.PreviousReplayObject),
+            new KeyBinding(InputKey.D, GlobalAction.NextReplayObject),
+            new KeyBinding(InputKey.Q, GlobalAction.SeekReplayOneSecondBackward),
+            new KeyBinding(InputKey.E, GlobalAction.SeekReplayOneSecondForward),
+            new KeyBinding(InputKey.W, GlobalAction.IncreaseReplayPlaybackSpeed),
+            new KeyBinding(InputKey.S, GlobalAction.DecreaseReplayPlaybackSpeed),
+            new KeyBinding(InputKey.F, GlobalAction.ResetReplayPlaybackSpeed),
+            new KeyBinding(new[] { InputKey.Control, InputKey.Shift, InputKey.BackSpace }, GlobalAction.ExitReplay),
+            new KeyBinding(InputKey.N, GlobalAction.NextReplayMiss),
+            new KeyBinding(InputKey.M, GlobalAction.NextReplayIgnored),
+            new KeyBinding(new[] { InputKey.Shift, InputKey.N }, GlobalAction.PreviousReplayMiss),
+            new KeyBinding(new[] { InputKey.Shift, InputKey.M }, GlobalAction.PreviousReplayIgnored),
         };
 
         private static IEnumerable<KeyBinding> songSelectKeyBindings => new[]
@@ -635,6 +650,51 @@ namespace osu.Game.Input.Bindings
 
         [LocalisableDescription(typeof(GlobalActionKeyBindingStrings), nameof(GlobalActionKeyBindingStrings.TakeAndUploadScreenshot))]
         TakeAndUploadScreeshot,
+
+        [LocalisableDescription(typeof(GlobalActionKeyBindingStrings), nameof(GlobalActionKeyBindingStrings.TakeOverReplay))]
+        TakeOverReplay,
+
+        [LocalisableDescription(typeof(GlobalActionKeyBindingStrings), nameof(GlobalActionKeyBindingStrings.RetryReplayPractice))]
+        RetryReplayPractice,
+
+        [LocalisableDescription(typeof(GlobalActionKeyBindingStrings), nameof(GlobalActionKeyBindingStrings.ReturnToReplay))]
+        ReturnToReplay,
+
+        [LocalisableDescription(typeof(GlobalActionKeyBindingStrings), nameof(GlobalActionKeyBindingStrings.PreviousReplayObject))]
+        PreviousReplayObject,
+
+        [LocalisableDescription(typeof(GlobalActionKeyBindingStrings), nameof(GlobalActionKeyBindingStrings.NextReplayObject))]
+        NextReplayObject,
+
+        [LocalisableDescription(typeof(GlobalActionKeyBindingStrings), nameof(GlobalActionKeyBindingStrings.SeekReplayOneSecondBackward))]
+        SeekReplayOneSecondBackward,
+
+        [LocalisableDescription(typeof(GlobalActionKeyBindingStrings), nameof(GlobalActionKeyBindingStrings.SeekReplayOneSecondForward))]
+        SeekReplayOneSecondForward,
+
+        [LocalisableDescription(typeof(GlobalActionKeyBindingStrings), nameof(GlobalActionKeyBindingStrings.IncreaseReplayPlaybackSpeed))]
+        IncreaseReplayPlaybackSpeed,
+
+        [LocalisableDescription(typeof(GlobalActionKeyBindingStrings), nameof(GlobalActionKeyBindingStrings.DecreaseReplayPlaybackSpeed))]
+        DecreaseReplayPlaybackSpeed,
+
+        [LocalisableDescription(typeof(GlobalActionKeyBindingStrings), nameof(GlobalActionKeyBindingStrings.ResetReplayPlaybackSpeed))]
+        ResetReplayPlaybackSpeed,
+
+        [LocalisableDescription(typeof(GlobalActionKeyBindingStrings), nameof(GlobalActionKeyBindingStrings.ExitReplay))]
+        ExitReplay,
+
+        [LocalisableDescription(typeof(GlobalActionKeyBindingStrings), nameof(GlobalActionKeyBindingStrings.NextReplayMiss))]
+        NextReplayMiss,
+
+        [LocalisableDescription(typeof(GlobalActionKeyBindingStrings), nameof(GlobalActionKeyBindingStrings.NextReplayIgnored))]
+        NextReplayIgnored,
+
+        [LocalisableDescription(typeof(GlobalActionKeyBindingStrings), nameof(GlobalActionKeyBindingStrings.PreviousReplayMiss))]
+        PreviousReplayMiss,
+
+        [LocalisableDescription(typeof(GlobalActionKeyBindingStrings), nameof(GlobalActionKeyBindingStrings.PreviousReplayIgnored))]
+        PreviousReplayIgnored,
     }
 
     public enum GlobalActionCategory

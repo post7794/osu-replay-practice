@@ -1,4 +1,4 @@
-// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
@@ -29,7 +29,7 @@ namespace osu.Game.Screens.Select
     {
         protected override UserActivity InitialActivity => new UserActivity.ChoosingBeatmap();
 
-        private PlayerLoader? playerLoader;
+        private Play.PlayerLoader? playerLoader;
         private IReadOnlyList<Mod>? modsAtGameplayStart;
 
         [Resolved]
@@ -124,7 +124,10 @@ namespace osu.Game.Screens.Select
 
             sampleConfirmSelection?.Play();
 
-            this.Push(playerLoader = new PlayerLoader(createPlayer));
+            var autoplay = Mods.Value.OfType<ModAutoplay>().FirstOrDefault();
+            this.Push(playerLoader = Ruleset.Value.OnlineID == 0 && autoplay is not null and not ModCinema
+                ? new AutoplayReplayPlayerLoader(autoplay.CreateScoreFromReplayData)
+                : new PlayerLoader(createPlayer));
 
             Player createPlayer()
             {

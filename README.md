@@ -1,147 +1,84 @@
-<p align="center">
-  <img width="500" alt="osu! logo" src="assets/lazer.png">
-</p>
+# osu! Replay Practice
 
-# osu!
+为 osu!lazer 增加回放接管训练：观看回放 → 定位 → 接管 → 倒计时 → 手动练习，反复练习同一段。
 
-[![Build status](https://github.com/ppy/osu/actions/workflows/ci.yml/badge.svg?branch=master&event=push)](https://github.com/ppy/osu/actions/workflows/ci.yml)
-[![GitHub release](https://img.shields.io/github/release/ppy/osu.svg)](https://github.com/ppy/osu/releases/latest)
-[![CodeFactor](https://www.codefactor.io/repository/github/ppy/osu/badge)](https://www.codefactor.io/repository/github/ppy/osu)
-[![dev chat](https://discordapp.com/api/guilds/188630481301012481/widget.png?style=shield)](https://discord.gg/ppy)
-[![Crowdin](https://d322cqt584bo4o.cloudfront.net/osu-web/localized.svg)](https://crowdin.com/project/osu-web)
+**这是基于 [ppy/osu](https://github.com/ppy/osu) 的非官方实验分支，不是 osu! 官方发行版。** 当前仅支持 **osu!standard**，已支持真实回放和 **Autoplay（AT）** 自动基线。
 
-A free-to-win rhythm game. Rhythm is just a *click* away!
+## 下载测试版
 
-This is the future – and final – iteration of the [osu!](https://osu.ppy.sh) game client which marks the beginning of an open era! Currently known by and released under the release codename "*lazer*". As in sharper than cutting-edge.
+从 [Releases](https://github.com/post7794/osu-replay-practice/releases) 下载 Windows x64 测试 ZIP，**完整解压**后运行 `Start-Replay-Practice.cmd` 或 `osu!.exe`。无需安装 .NET SDK 或运行时。
 
-## Status
+- 默认使用独立数据目录 `%APPDATA%\osu-replay-practice-test`，关闭自动更新和文件关联。
+- 不包含开发者的曲目、回放、账号配置或数据库；请自行导入测试素材。
+- 不要把测试版的存储位置设置为日常使用的 osu! 数据目录。
+- 测试接管不需要登录账号。**只有接管训练禁止保存和提交；普通游戏、登录及导入仍按原流程工作，整个客户端不是强制离线模式。**
 
-This project is under constant development, but we do our best to keep things in a stable state. Players are encouraged to install from a release alongside their stable *osu!* client. This project will continue to evolve until we eventually reach the point where most users prefer it over the previous "osu!stable" release.
+## 开始练习
 
-A few resources are available as starting points to getting involved and understanding the project:
+### 有真实回放
 
-- Detailed release changelogs are available on the [official osu! site](https://osu.ppy.sh/home/changelog/lazer).
-- You can learn more about our approach to [project management](https://github.com/ppy/osu/wiki/Project-management).
-- Track our current efforts [towards improving the game](https://github.com/orgs/ppy/projects/7/views/6).
+导入匹配的谱面与回放，进入回放观看，定位后按 `Ctrl+Enter` 或点击接管按钮。3 秒倒计时期间谱面冻结，结束后仅使用真实输入。
 
-## Running osu!
+### 没有回放：Autoplay
 
-If you are just looking to give the game a whirl, you can grab the latest release for your platform:
+选歌界面按 `Ctrl+Enter` 启动 Autoplay（或选择 AT 后开始），定位到目标片段，再按 `Ctrl+Enter` 接管。
 
-### Latest release:
+**自动基线不会找回中途退出那局的真实操作、失误或血量。** 自动输入只用于恢复历史，手动阶段移除 AT；重试复用同一基线，不重新随机谱面。CN/RX/AP/SO、未知 Mods 和非 standard 仍不支持接管。
 
-| [Windows 10+ (x64)](https://github.com/ppy/osu/releases/latest/download/install.exe) | macOS 12+ ([Intel](https://github.com/ppy/osu/releases/latest/download/osu.app.Intel.zip), [Apple Silicon](https://github.com/ppy/osu/releases/latest/download/osu.app.Apple.Silicon.zip)) | [Linux (x64)](https://github.com/ppy/osu/releases/latest/download/osu.AppImage) | [iOS 13.4+](https://osu.ppy.sh/home/testflight) | [Android 5+](https://github.com/ppy/osu/releases/latest/download/sh.ppy.osulazer.apk) |
-|--------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| ------------- | ------------- | ------------- |
+## 功能与默认快捷键
 
-You can also generally download a version for your current device from the [osu! site](https://osu.ppy.sh/home/download).
+| 操作 | 默认快捷键 |
+| --- | --- |
+| 接管 | `Ctrl+Enter` |
+| 暂停 / 继续 | `Space`、鼠标中键 |
+| 重试相同起点 | `Ctrl+Shift+Enter` |
+| 返回回放，在练习起点暂停 | `Ctrl+Backspace` |
+| 直接退出 | `Ctrl+Shift+Backspace` |
+| 上一个 / 下一个物件（刚出现时） | `A` / `D` |
+| 后退 / 前进一秒 | `Q` / `E` |
+| 上一个 / 下一个原回放 Miss | `Shift+N` / `N` |
+| 上一个 / 下一个少加 combo、但不断连的判定 | `Shift+M` / `M` |
+| 加速 / 减速；重置速度 | `W` / `S`；`F` |
+| 后退 / 前进一回放帧 | `,` / `.` |
 
-If your platform is unsupported or not listed above, there is still a chance you can run the release or manually build it by following the instructions below.
+快捷键可在回放内和游戏官方按键配置的 Replay 分组中修改。
+支持滑条/转盘中途精确接管、物件范围练习、训练中定位、可拖拽缩放并吸附到谱面外侧的菜单。
+Miss、空血不打断训练；自然结束停在训练界面。次数、准确率和 Miss 统计只保留在本次会话，退出即丢弃。
+接管训练不提交成绩、不写正常成绩库、不生成新回放、不修改源回放。
 
-**For iOS/iPadOS users**: The iOS testflight link fills up very fast (Apple has a hard limit of 10,000 users). We reset it occasionally. Please do not ask about this. Check back regularly for link resets or follow [peppy](https://twitter.com/ppy) on twitter for announcements. Our goal is to get the game on mobile app stores very soon so we don't have to live with this limitation.
+## 界面语言
 
-## Developing a custom ruleset
+**跟随 osu! 的语言设置，无需单独切换或重启。** 在游戏设置搜索 Language / 语言，选择简体中文或 English，新增按钮、倒计时、统计和快捷键说明会同步切换。
+中英资源已内置；其他语言的新增文本使用英文回退。启动脚本及 .NET 构建日志固定英文，避免控制台乱码。
 
-osu! is designed to allow user-created gameplay variations, called "rulesets". Building one of these allows a developer to harness the power of the osu! beatmap library, game engine, and general UX for a new style of gameplay. To get started working on a ruleset, we have some templates available [here](https://github.com/ppy/osu/tree/master/Templates).
+## 从源码运行
 
-You can see some examples of custom rulesets by visiting the [custom ruleset directory](https://github.com/ppy/osu/discussions/13096).
+Windows 开发需要 PowerShell 7 (`pwsh`) 和与 `global.json` 相容的 .NET 10 SDK。仓库不附带本地 SDK/依赖缓存；脚本优先使用已有的 `.tools/dotnet`，否则使用系统 `dotnet`。
 
-## Developing osu!
-
-### Prerequisites
-
-Please make sure you have the following prerequisites:
-
-- A desktop platform with the correct [.NET SDK](https://dotnet.microsoft.com/download) installed.
-
-When working with the codebase, we recommend using an IDE with intelligent code completion and syntax highlighting, such as the latest version of [Visual Studio](https://visualstudio.microsoft.com/vs/), [JetBrains Rider](https://www.jetbrains.com/rider/), or [Visual Studio Code](https://code.visualstudio.com/) with the [EditorConfig](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig) and [C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit) plugin installed.
-
-### Downloading the source code
-
-Clone the repository:
-
-```shell
-git clone https://github.com/ppy/osu
-cd osu
+```powershell
+pwsh -NoProfile -File .\ReplayPractice.ps1 Build
+pwsh -NoProfile -File .\ReplayPractice.ps1 Test
+pwsh -NoProfile -File .\ReplayPractice.ps1 Run
+pwsh -NoProfile -File .\ReplayPractice.ps1 Package
 ```
 
-To update the source code to the latest commit, run the following command inside the `osu` directory:
+`Run` 使用独立的 `osu-development-4242` 数据目录。`Package` 生成自包含的 Windows x64 测试包及 SHA256 校验文件，产物放在 `dist/`，不纳入 Git。
+完整行为、边界条件和验收范围见 [REPLAY_PRACTICE.md](REPLAY_PRACTICE.md)。
 
-```shell
-git pull
-```
+截至 2026-10-04：相关回归 273 通过、1 跳过，PlayerLoader 回归 27 通过；构建及发布版启动检查通过。这不等于整个 osu! 测试套件或所有皮肤/分辨率的人工验收。
+本仓库暂未启用 GitHub Actions；上游工作流保留作为源码参考，启用前需检查其官方服务和发布依赖。
 
-### Building
+## 反馈与许可
 
-#### From an IDE
+接管功能和本测试版的问题请提交到 [本仓库 Issues](https://github.com/post7794/osu-replay-practice/issues)，不要报到官方 osu! 仓库。
+请附包名（`build-info.json`）、复现步骤、Mods、窗口尺寸/分辨率和是否使用 Autoplay。日志、谱面及回放按需提供，分享前检查个人信息，不需要提交账号配置或整个数据库。
 
-You should load the solution via one of the platform-specific `.slnf` files, rather than the main `.sln`. This will reduce dependencies and hide platforms that you don't care about. Valid `.slnf` files are:
+保留上游的 [MIT 许可](LICENCE) 及源文件版权声明。原始项目说明见 [README.upstream.md](README.upstream.md)；打包产物随附可用的第三方许可信息。
 
-- `osu.Desktop.slnf` (most common)
-- `osu.Android.slnf`
-- `osu.iOS.slnf`
+## English quick start
 
-Run configurations for the recommended IDEs (listed above) are included. You should use the provided Build/Run functionality of your IDE to get things going. When testing or building new components, it's highly encouraged you use the `osu! (Tests)` project/configuration. More information on this is provided [below](#contributing).
+Unofficial osu!lazer replay-takeover practice branch, osu!standard only. Download and fully extract the Windows x64 ZIP from Releases. Run `Start-Replay-Practice.cmd`; the .NET runtime is bundled and test storage is separate from normal osu!.
 
-To build for mobile platforms, you will likely need to run `sudo dotnet workload restore` if you haven't done so previously. This will install Android/iOS tooling required to complete the build.
+Watch a replay, seek, then `Ctrl+Enter` to take over after a frozen 3-second countdown. Without a replay, `Ctrl+Enter` in song select starts Autoplay; seek and press it again to take over. AT supplies the historical baseline only and is absent from manual practice. This cannot recover lost real-play input. Other automation mods remain unsupported.
 
-#### From CLI
-
-You can also build and run *osu!* from the command-line with a single command:
-
-```shell
-dotnet run --project osu.Desktop
-```
-
-When running locally to do any kind of performance testing, make sure to add `-c Release` to the build command, as the overhead of running with the default `Debug` configuration can be large (especially when testing with local framework modifications as below).
-
-If the build fails, try to restore NuGet packages with `dotnet restore`.
-
-### Testing with resource/framework modifications
-
-Sometimes it may be necessary to cross-test changes in [osu-resources](https://github.com/ppy/osu-resources) or [osu-framework](https://github.com/ppy/osu-framework). This can be quickly achieved using included commands:
-
-Windows:
-
-```ps
-UseLocalFramework.ps1
-UseLocalResources.ps1
-```
-
-macOS / Linux:
-
-```ps
-UseLocalFramework.sh
-UseLocalResources.sh
-```
-
-Note that these commands assume you have the relevant project(s) checked out in adjacent directories:
-
-```
-|- osu            // this repository
-|- osu-framework
-|- osu-resources
-```
-
-### Code analysis
-
-Before committing your code, please run a code formatter. This can be achieved by running `dotnet format` in the command line, or using the `Format code` command in your IDE.
-
-We have adopted some cross-platform, compiler integrated analyzers. They can provide warnings when you are editing, building inside IDE or from command line, as-if they are provided by the compiler itself.
-
-JetBrains ReSharper InspectCode is also used for wider rule sets. You can run it from PowerShell with `.\InspectCode.ps1`. Alternatively, you can install ReSharper or use Rider to get inline support in your IDE of choice.
-
-## Contributing
-
-When it comes to contributing to the project, the two main things you can do to help out are reporting issues and submitting pull requests. Please refer to the [contributing guidelines](CONTRIBUTING.md) to understand how to help in the most effective way possible.
-
-If you wish to help with localisation efforts, head over to [crowdin](https://crowdin.com/project/osu-web).
-
-Our team believes in **human contributions**. Any contribution – be it an issue report or a pull request – which is created by, documented by, or aided by AI/LLM usage will typically be **closed and locked without further discussion**.
-
-## Licence
-
-*osu!*'s code and framework are licensed under the [MIT licence](https://opensource.org/licenses/MIT). Please see [the licence file](LICENCE) for more information. [tl;dr](https://tldrlegal.com/license/mit-license) you can do whatever you want as long as you include the original copyright and license notice in any copy of the software/source.
-
-Please note that this *does not cover* the usage of the "osu!" or "ppy" branding in any software, resources, advertising or promotion, as this is protected by trademark law.
-
-Please also note that game resources are covered by a separate licence. Please see the [ppy/osu-resources](https://github.com/ppy/osu-resources) repository for clarifications.
+Practice never saves/submits scores or records a replay; normal play is not forced offline. UI text follows osu!'s selected language (English/Simplified Chinese). Report branch-specific issues here, not upstream.

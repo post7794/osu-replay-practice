@@ -22,6 +22,10 @@
   <PropertyGroup>
     <StartupObject>osu.Desktop.Program</StartupObject>
   </PropertyGroup>
+  <!-- Distribution-only isolation; normal Debug and Release builds remain unchanged. -->
+  <PropertyGroup Condition="'$(ReplayPracticeTestBuild)'=='true'">
+    <DefineConstants>$(DefineConstants);REPLAY_PRACTICE_TEST_BUILD</DefineConstants>
+  </PropertyGroup>
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\osu.Game.Tournament\osu.Game.Tournament.csproj"/>
     <ProjectReference Include="..\osu.Game\osu.Game.csproj"/>

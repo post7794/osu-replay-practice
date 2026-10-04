@@ -289,6 +289,13 @@ namespace osu.Game.Rulesets.Osu.Objects.Drawables
             return action == OsuAction.LeftButton || action == OsuAction.RightButton;
         }
 
+        public void RebaseForReplayTakeover()
+        {
+            // Replay keys have been released at the handover. Any live gameplay key may now track the slider.
+            timeToAcceptAnyKeyAfter = double.NegativeInfinity;
+            lastPressedActions.Clear();
+        }
+
         private void resetState(DrawableHitObject obj)
         {
             Tracking = false;

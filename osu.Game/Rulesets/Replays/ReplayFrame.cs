@@ -2,6 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using MessagePack;
+using Newtonsoft.Json;
 using osu.Game.Online.Spectator;
 
 namespace osu.Game.Rulesets.Replays
@@ -29,6 +30,17 @@ namespace osu.Game.Rulesets.Replays
         public ReplayFrame(double time)
         {
             Time = time;
+        }
+
+        /// <summary>
+        /// Copies the mutable frame header. Rulesets must additionally copy mutable frame-specific data.
+        /// </summary>
+        public virtual ReplayFrame DeepClone()
+        {
+            var clone = (ReplayFrame)MemberwiseClone();
+            if (Header != null)
+                clone.Header = JsonConvert.DeserializeObject<FrameHeader>(JsonConvert.SerializeObject(Header));
+            return clone;
         }
 
         /// <summary>
