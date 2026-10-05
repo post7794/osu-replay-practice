@@ -1,4 +1,4 @@
-﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 #nullable disable
@@ -55,9 +55,10 @@ namespace osu.Game.IO
                     {
                         if (!line.StartsWith("BeatmapDirectory", StringComparison.OrdinalIgnoreCase)) continue;
 
-                        string customDirectory = line.Split('=').LastOrDefault()?.Trim();
-                        if (customDirectory != null && Path.IsPathFullyQualified(customDirectory))
-                            return customDirectory;
+                        int separator = line.IndexOf('=');
+                        string customDirectory = separator < 0 ? null : line.Substring(separator + 1).Trim();
+                        if (!string.IsNullOrWhiteSpace(customDirectory))
+                            return Path.IsPathFullyQualified(customDirectory) ? customDirectory : GetFullPath(customDirectory);
 
                         break;
                     }

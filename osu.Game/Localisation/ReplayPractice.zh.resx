@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -93,4 +93,7 @@
   <data name="AutoplayBaseline" xml:space="preserve"><value>自动生成基线</value></data>
   <data name="AutoplayPractice" xml:space="preserve"><value>自动基线练习 · 不保存</value></data>
   <data name="AutoplayBaselineHelp" xml:space="preserve"><value>这是自动生成的练习基线，不是你之前那次游玩的回放。接管时移除 Autoplay，其他 Mods 保留；准备结束后只使用真实输入。</value></data>
+  <data name="HoldObjectFocus" xml:space="preserve"><value>按住聚焦当前物件</value></data>
+  <data name="HoldObjectFocusHelp" xml:space="preserve"><value>暂停定位到物件后，在此按住鼠标左键可淡化其他物件；松开或移开鼠标即恢复。不修改皮肤、时间或判定。</value></data>
+  <data name="SelectedObjectMarker" xml:space="preserve"><value>当前 #{0}</value></data>
 </root>

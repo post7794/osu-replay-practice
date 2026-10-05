@@ -41,13 +41,16 @@ namespace osu.Game.Beatmaps
         {
         }
 
-        public override async Task<Live<BeatmapSetInfo>?> ImportAsUpdate(ProgressNotification notification, ImportTask importTask, BeatmapSetInfo original)
+        public override Task<Live<BeatmapSetInfo>?> ImportAsUpdate(ProgressNotification notification, ImportTask importTask, BeatmapSetInfo original) =>
+            ImportAsUpdate(notification, importTask, original, default);
+
+        public async Task<Live<BeatmapSetInfo>?> ImportAsUpdate(ProgressNotification notification, ImportTask importTask, BeatmapSetInfo original, ImportParameters parameters)
         {
             var originalDateAdded = original.DateAdded;
 
             Guid originalId = original.ID;
 
-            var imported = await Import(notification, new[] { importTask }).ConfigureAwait(false);
+            var imported = await Import(notification, new[] { importTask }, parameters).ConfigureAwait(false);
 
             if (!imported.Any())
                 return null;
@@ -289,7 +292,10 @@ namespace osu.Game.Beatmaps
             var importIds = import.Beatmaps.Select(b => b.OnlineID).Order();
 
             // force re-import if we are not in a sane state.
-            return existing.OnlineID == import.OnlineID && existingIds.SequenceEqual(importIds);
+            // Equal .osu contents do not imply equal audio, backgrounds, storyboards or other resources.
+            return existing.OnlineID == import.OnlineID && existingIds.SequenceEqual(importIds)
+                   && existing.Files.Count == import.Files.Count
+                   && existing.Files.All(f => import.GetFile(f.Filename)?.File.Hash == f.File.Hash);
         }
 
         protected override void UndeleteForReuse(BeatmapSetInfo existing)

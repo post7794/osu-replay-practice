@@ -1,4 +1,4 @@
-﻿# Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+# Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 # See the LICENCE file in the repository root for full licence text.
 
 [CmdletBinding()]
@@ -90,6 +90,7 @@ function Invoke-ReplayPracticePackage {
     Copy-Item -LiteralPath (Join-Path $root 'packaging\ReplayPracticeTest\README.txt') -Destination $stage
     Copy-Item -LiteralPath (Join-Path $root 'packaging\ReplayPracticeTest\Start-Replay-Practice.cmd') -Destination $stage
     Copy-Item -LiteralPath (Join-Path $root 'LICENCE') -Destination $stage
+    Copy-Item -LiteralPath (Join-Path $root 'LAZER_SYNC.md') -Destination $stage
 
     # Preserve available dependency licence files and each runtime package's licence metadata.
     $thirdParty = Join-Path $stage 'THIRD-PARTY'
@@ -148,7 +149,7 @@ function Invoke-ReplayPracticePackage {
         automaticUpdates = $false
         fileAssociationsInstalled = $false
         userBeatmapsReplaysAndConfigurationIncluded = $false
-        features = @('osu-standard-replay-takeover', 'osu-standard-autoplay-takeover')
+        features = @('osu-standard-replay-takeover', 'osu-standard-autoplay-takeover', 'osu-lazer-offline-two-way-beatmap-sync', 'osu-lazer-offline-two-way-replay-sync', 'skin-independent-replay-object-marker', 'hold-to-focus-replay-object')
     } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $stage 'build-info.json') -Encoding UTF8
 
     $files = @(Get-ChildItem -LiteralPath $stage -File -Recurse)
@@ -178,7 +179,7 @@ try {
         $project = 'osu.Game.Tests/osu.Game.Tests.csproj'
         Invoke-Dotnet -Arguments @('restore', $project, '--configfile', $nugetConfig, '--disable-parallel', '-m:1', '-nr:false', '--verbosity', 'minimal') -LogName 'restore-tests.log'
         Invoke-Dotnet -Arguments @('build', $project, '--no-restore', '-m:1', '-nr:false', '--verbosity', 'minimal') -LogName 'build-tests.log'
-        $filter = 'FullyQualifiedName~ReplayPracticeLocalisationTest|FullyQualifiedName~TestSceneSongProgress|FullyQualifiedName~ReplayPracticeSessionTest|FullyQualifiedName~ReplayTransportTest|FullyQualifiedName~TestSceneReplayPractice|FullyQualifiedName~TestSceneReplayPlayer|FullyQualifiedName~FramedReplayInputHandlerTest|FullyQualifiedName~TestSceneReplayRecorder|FullyQualifiedName~TestSceneReplayShortcuts|FullyQualifiedName~TestSceneKeyBindingPanel|FullyQualifiedName~TestScenePause|FullyQualifiedName~TestSceneSongSelect.TestAutoplay'
+        $filter = 'FullyQualifiedName~ReplayPracticeLocalisationTest|FullyQualifiedName~TestSceneSongProgress|FullyQualifiedName~ReplayPracticeSessionTest|FullyQualifiedName~ReplayTransportTest|FullyQualifiedName~TestSceneReplayPractice|FullyQualifiedName~TestSceneReplayPlayer|FullyQualifiedName~FramedReplayInputHandlerTest|FullyQualifiedName~TestSceneReplayRecorder|FullyQualifiedName~TestSceneReplayShortcuts|FullyQualifiedName~TestSceneKeyBindingPanel|FullyQualifiedName~TestScenePause|FullyQualifiedName~TestSceneSongSelect.TestAutoplay|FullyQualifiedName~StableBeatmapSync|FullyQualifiedName~LazerSyncLocalisationTest|FullyQualifiedName~LazerBeatmapSync|FullyQualifiedName~LazerReplaySync|FullyQualifiedName~BeatmapImporter|FullyQualifiedName~FileStoreTests|FullyQualifiedName~LegacyBeatmapImporterTest'
         Invoke-Dotnet -Arguments @('test', $project, '--no-build', '--no-restore', '-m:1', '-nr:false', '--filter', $filter, '--logger', 'trx;LogFileName=replay-regression.trx', '--results-directory', '.tools/test-results', '--verbosity', 'minimal') -LogName 'test-regression.log'
     }
     else {

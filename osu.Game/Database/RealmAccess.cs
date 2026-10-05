@@ -46,6 +46,7 @@ namespace osu.Game.Database
     public class RealmAccess : IDisposable
     {
         private readonly Storage storage;
+        private readonly bool syncSnapshot;
 
         /// <summary>
         /// The filename of this realm.
@@ -204,8 +205,20 @@ namespace osu.Game.Database
         /// <param name="filename">The filename to use for the realm backing file. A ".realm" extension will be added automatically if not specified.</param>
         /// <param name="updateThread">The game update thread, used to post realm operations into a thread-safe context.</param>
         public RealmAccess(Storage storage, string filename, GameThread? updateThread = null)
+            : this(storage, filename, updateThread, false)
+        {
+        }
+
+        /// <summary>
+        /// Opens an isolated copy of an existing database without migration, recovery, filename
+        /// rewriting or startup cleanup. Never use this on another running client's live database.
+        /// </summary>
+        internal static RealmAccess OpenSyncSnapshot(Storage storage, string filename) => new RealmAccess(storage, filename, null, true);
+
+        private RealmAccess(Storage storage, string filename, GameThread? updateThread, bool syncSnapshot)
         {
             this.storage = storage;
+            this.syncSnapshot = syncSnapshot;
 
             updateThreadSyncContext = updateThread?.SynchronizationContext ?? SynchronizationContext.Current;
 
@@ -213,6 +226,15 @@ namespace osu.Game.Database
 
             if (!Filename.EndsWith(realm_extension, StringComparison.Ordinal))
                 Filename += realm_extension;
+
+            if (syncSnapshot)
+            {
+                if (!storage.Exists(Filename))
+                    throw new FileNotFoundException("The lazer database snapshot does not exist.");
+                // Deliberately bypass prepareFirstRealmAccess(): its recovery can replace databases.
+                using var existing = getRealmInstance();
+                return;
+            }
 
 #if DEBUG
             if (!DebugUtils.IsNUnitRunning)
@@ -821,7 +843,9 @@ namespace osu.Game.Database
             return new RealmConfiguration(storage.GetFullPath(filename ?? Filename, true))
             {
                 SchemaVersion = schema_version,
-                MigrationCallback = onMigration,
+                MigrationCallback = syncSnapshot
+                    ? (_, _) => throw new InvalidOperationException("The official lazer database schema differs from this build. Update both clients before syncing.")
+                    : onMigration,
                 FallbackPipePath = tempPathLocation,
             };
         }

@@ -1,6 +1,8 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using System;
+
 namespace osu.Game.Database
 {
     public struct ImportParameters
@@ -21,6 +23,16 @@ namespace osu.Game.Database
         /// Whether this import should use hard links rather than file copy operations if available.
         /// </summary>
         public bool PreferHardLinks { get; set; }
+
+        /// <summary>
+        /// Break any pre-existing hard links when importing a mutable external library.
+        /// </summary>
+        public bool EnsureIndependentFiles { get; set; }
+
+        /// <summary>
+        /// Optional optimistic concurrency guard, evaluated inside the import transaction.
+        /// </summary>
+        public Func<bool>? CanCommit { get; set; }
 
         /// <summary>
         /// If set to <see langword="true"/>, this import will not respect <see cref="RealmArchiveModelImporter{TModel}.PauseImports"/>.

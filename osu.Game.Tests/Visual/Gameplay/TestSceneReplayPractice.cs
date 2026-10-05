@@ -43,6 +43,7 @@ using osu.Game.Rulesets.Osu.UI;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.UI;
 using osu.Game.Scoring;
+using osu.Game.Skinning;
 using osu.Game.Screens.Play;
 using osu.Game.Screens.Play.HUD;
 using osu.Game.Screens.Play.PlayerSettings;
@@ -131,7 +132,7 @@ namespace osu.Game.Tests.Visual.Gameplay
         }
 
         private void loadReplay(double time, Mod[]? mods = null, bool legacy = false, bool mismatchedHash = false, bool overlappingSliders = false, bool missedHead = false, bool droppedTail = false,
-                                bool? releaseBeforeTailBoundary = null, bool longReplay = false, bool generatedAutoplay = false)
+                                bool? releaseBeforeTailBoundary = null, bool longReplay = false, bool generatedAutoplay = false, bool stackedCircles = false)
         {
             AddStep("load isolated replay", () =>
             {
@@ -188,6 +189,12 @@ namespace osu.Game.Tests.Visual.Gameplay
                     """));
                 using var reader = new LineBufferedReader(stream);
                 var beatmap = Decoder.GetDecoder<Beatmap>(reader).Decode(reader);
+                if (stackedCircles)
+                {
+                    beatmap.HitObjects.Clear();
+                    foreach (double startTime in new[] { 1000.0, 1150, 1300, 4000 })
+                        beatmap.HitObjects.Add(new HitCircle { Position = new Vector2(256, 192), StartTime = startTime });
+                }
                 if (longReplay)
                 {
                     var content = new StringBuilder("""
@@ -2026,6 +2033,127 @@ namespace osu.Game.Tests.Visual.Gameplay
             assertIsolation();
         }
 
+        [TestCase(false, false)]
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        [TestCase(true, true)]
+        public void TestObjectMarkerAndHoldFocus(bool classicSkin, bool hiddenHardRock)
+        {
+            AddStep("choose test skin", () =>
+            {
+                var skins = Dependencies.Get<SkinManager>();
+                skins.CurrentSkinInfo.Value = classicSkin ? skins.DefaultClassicSkin.SkinInfo : ArgonSkin.CreateInfo().ToLiveUnmanaged();
+            });
+            loadReplay(1600, hiddenHardRock ? new Mod[] { new OsuModHidden(), new OsuModHardRock() } : null, overlappingSliders: true);
+            ReplayPlayer viewer = null!;
+            DrawableOsuRuleset osu = null!;
+            RoundedButton focusButton = null!;
+            DrawableSlider previous = null!;
+            RuntimeSnapshot before = null!;
+            float oldAlpha = 0;
+            float oldApproachAlpha = 0;
+            double selectedTime = 0;
+            AddStep("select second overlapping slider", () => InputManager.Key(Key.D));
+            AddUntilStep("marker identifies frozen target", () =>
+            {
+                viewer = (ReplayPlayer)Stack.CurrentScreen;
+                osu = viewer.ChildrenOfType<DrawableOsuRuleset>().Single();
+                return osu.Playfield.ReplayObjectMarker.TargetIndex == 1 && !viewer.IsRestoringReplay;
+            });
+            AddStep("verify marker and save baseline", () =>
+            {
+                var target = osu.Playfield.HitObjectContainer.AliveObjects.OfType<DrawableSlider>().Single(d => d.HitObject == viewer.GameplayState.Beatmap.HitObjects[1]);
+                var marker = osu.Playfield.ReplayObjectMarker;
+                Assert.That(marker.TargetBounds, Is.EqualTo(osu.Playfield.ToLocalSpace(target.HeadCircle.HitArea.ScreenSpaceDrawQuad).AABBFloat));
+                Assert.That(marker.ChildrenOfType<OsuSpriteText>().Single().Text, Is.EqualTo((LocalisableString)ReplayPracticeStrings.SelectedObjectMarker(2)));
+                Assert.That(marker.HandlePositionalInput || marker.HandleNonPositionalInput, Is.False);
+                Assert.That(target.HeadCircle.CirclePiece.Alpha, Is.GreaterThanOrEqualTo(0.3f));
+                previous = osu.Playfield.HitObjectContainer.AliveObjects.OfType<DrawableSlider>().First(d => d.HitObject.StartTime == 1000);
+                oldAlpha = previous.Alpha;
+                oldApproachAlpha = previous.HeadCircle.ApproachCircle.Alpha;
+                Assert.That(oldAlpha, Is.GreaterThan(0.5));
+                before = snapshot(viewer);
+                selectedTime = viewer.TransportTime;
+                focusButton = viewer.TransportControls.ChildrenOfType<RoundedButton>().Single(b => b.Text == ReplayPracticeStrings.HoldObjectFocus);
+                InputManager.MoveMouseTo(focusButton);
+                InputManager.PressButton(MouseButton.Left);
+            });
+            AddUntilStep("hold dims other objects", () => previous.Alpha < oldAlpha * 0.2f);
+            AddAssert("selected marker is not dimmed", () => osu.Playfield.ReplayObjectMarker.Alpha, () => Is.EqualTo(1));
+            AddAssert("approach alpha itself not rewritten", () => previous.HeadCircle.ApproachCircle.Alpha, () => Is.EqualTo(oldApproachAlpha));
+            AddStep("release focus", () => InputManager.ReleaseButton(MouseButton.Left));
+            AddUntilStep("original object opacity restored", () => Math.Abs(previous.Alpha - oldAlpha) < 0.001);
+            AddStep("hold then move away", () =>
+            {
+                InputManager.MoveMouseTo(focusButton);
+                InputManager.PressButton(MouseButton.Left);
+            });
+            AddUntilStep("dimmed again", () => previous.Alpha < oldAlpha * 0.2f);
+            AddStep("leave button while held", () => InputManager.MoveMouseTo(viewer.TransportControls.DragHandle));
+            AddUntilStep("moving away restores", () => Math.Abs(previous.Alpha - oldAlpha) < 0.001);
+            AddStep("release and check no gameplay changes", () =>
+            {
+                InputManager.ReleaseButton(MouseButton.Left);
+                assertEquivalent(snapshot(viewer), before);
+                Assert.That(viewer.TransportTime, Is.EqualTo(selectedTime).Within(0.001));
+            });
+            AddStep("resize viewport", () => Stack.Scale = new Vector2(0.8f));
+            AddUntilStep("marker follows resized receptor", () =>
+            {
+                var head = osu.Playfield.HitObjectContainer.AliveObjects.OfType<DrawableSlider>().Single(d => d.HitObject.StartTime == 3000).HeadCircle;
+                return osu.Playfield.ReplayObjectMarker.TargetBounds == osu.Playfield.ToLocalSpace(head.HitArea.ScreenSpaceDrawQuad).AABBFloat;
+            });
+            AddStep("restore viewport and step frame", () =>
+            {
+                Stack.Scale = Vector2.One;
+                viewer.StepTransportFrame(1);
+            });
+            AddUntilStep("arbitrary navigation clears marker", () => osu.Playfield.ReplayObjectMarker.TargetIndex == null);
+            AddAssert("focus disabled without selection", () => !focusButton.Enabled.Value);
+            AddStep("restore default skin", () => Dependencies.Get<SkinManager>().CurrentSkinInfo.SetDefault());
+            assertIsolation();
+        }
+
+        [Test]
+        public void TestObjectMarkerIdentifiesSpinnerCentre()
+        {
+            loadReplay(1600);
+            AddStep("next object selects spinner", () => InputManager.Key(Key.D));
+            AddUntilStep("spinner has annotation", () => ((ReplayPlayer)Stack.CurrentScreen).ChildrenOfType<DrawableOsuRuleset>().Single().Playfield.ReplayObjectMarker.TargetIndex == 2);
+            AddStep("annotation targets spinner centre, not entire screen", () =>
+            {
+                var osu = ((ReplayPlayer)Stack.CurrentScreen).ChildrenOfType<DrawableOsuRuleset>().Single();
+                var spinner = osu.Playfield.HitObjectContainer.AliveObjects.OfType<DrawableSpinner>().Single();
+                Assert.That(osu.Playfield.ReplayObjectMarker.TargetBounds.Centre,
+                    Is.EqualTo(osu.Playfield.ToLocalSpace(spinner.ScreenSpaceDrawQuad.Centre)));
+                Assert.That(osu.Playfield.ReplayObjectMarker.TargetBounds.Width, Is.EqualTo(64));
+            });
+            assertIsolation();
+        }
+        [Test]
+        public void TestObjectMarkerFollowsStackAndClearsOnPlayback()
+        {
+            loadReplay(-500, stackedCircles: true);
+            DrawableOsuRuleset osu = null!;
+            AddStep("select first stacked circle", () => InputManager.Key(Key.D));
+            AddUntilStep("first marker visible", () =>
+            {
+                osu = ((ReplayPlayer)Stack.CurrentScreen).ChildrenOfType<DrawableOsuRuleset>().Single();
+                return osu.Playfield.ReplayObjectMarker.TargetIndex == 0;
+            });
+            AddStep("select next at same position", () => InputManager.Key(Key.D));
+            AddUntilStep("number changed for same-position objects", () => osu.Playfield.ReplayObjectMarker.TargetIndex == 1);
+            AddStep("marker follows final stack offset", () =>
+            {
+                var selected = (OsuHitObject)((ReplayPlayer)Stack.CurrentScreen).GameplayState.Beatmap.HitObjects[1];
+                Assert.That(selected.StackHeight, Is.Not.Zero);
+                Assert.That(osu.Playfield.ReplayObjectMarker.TargetBounds.Centre.X, Is.EqualTo(selected.StackedPosition.X).Within(0.01));
+                Assert.That(osu.Playfield.ReplayObjectMarker.TargetBounds.Centre.Y, Is.EqualTo(selected.StackedPosition.Y).Within(0.01));
+            });
+            AddStep("resume", () => ((ReplayPlayer)Stack.CurrentScreen).ToggleTransportPause());
+            AddUntilStep("playback removes annotation", () => osu.Playfield.ReplayObjectMarker.TargetIndex == null && osu.Playfield.ReplayObjectMarker.Alpha == 0);
+            assertIsolation();
+        }
         [Test]
         public void TestNextObjectAfterResumingPlaybackDoesNotRewind()
         {
@@ -2096,6 +2224,7 @@ namespace osu.Game.Tests.Visual.Gameplay
                         && (hidden || slider.HeadCircle.ApproachCircle.Alpha >= 0.3f);
                 });
                 AddAssert("navigation does not use gameplay entry scale animation", () => practice.Scale, () => Is.EqualTo(Vector2.One));
+                AddAssert("annotation matches selected practice object", () => ruleset.Playfield.ReplayObjectMarker.TargetIndex, () => Is.EqualTo(selected));
                 AddAssert("target stays at appearance during paused preview", () => practice.TransportTime, () => Is.EqualTo(targetTime).Within(0.001));
                 AddAssert("preview did not create results", () => scoreProcessor.JudgedHits == 0 && practice.AttemptMisses == 0);
                 if (hidden)
@@ -2110,6 +2239,7 @@ namespace osu.Game.Tests.Visual.Gameplay
                 clock.Stop();
                 return true;
             });
+            AddAssert("annotation cleared before manual input", () => ruleset.Playfield.ReplayObjectMarker.TargetIndex, () => Is.Null);
             AddStep("normal fade restored before gameplay advances", () =>
             {
                 var slider = ruleset.Playfield.HitObjectContainer.AliveObjects.OfType<DrawableSlider>()

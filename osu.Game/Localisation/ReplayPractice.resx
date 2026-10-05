@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -93,4 +93,7 @@
   <data name="AutoplayBaseline" xml:space="preserve"><value>AUTOPLAY BASELINE</value></data>
   <data name="AutoplayPractice" xml:space="preserve"><value>AUTOPLAY PRACTICE — NOT SAVED</value></data>
   <data name="AutoplayBaselineHelp" xml:space="preserve"><value>This is an automatically generated baseline, not your previous play. Takeover removes Autoplay and preserves the other mods. Only your input is used after preparation.</value></data>
+  <data name="HoldObjectFocus" xml:space="preserve"><value>Hold to focus object</value></data>
+  <data name="HoldObjectFocusHelp" xml:space="preserve"><value>While paused on an object, hold the left mouse button here to dim other objects. Release or move away to restore them. Does not alter skins, timing or judgements.</value></data>
+  <data name="SelectedObjectMarker" xml:space="preserve"><value>Selected #{0}</value></data>
 </root>

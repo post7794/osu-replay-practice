@@ -7,6 +7,7 @@ using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Primitives;
 using osu.Framework.Input;
 using osu.Framework.Timing;
 using osu.Game.Rulesets.Scoring;
@@ -104,7 +105,11 @@ namespace osu.Game.Rulesets.Osu.UI
         protected override ReplayRecorder CreateReplayRecorder(Score score) => new OsuReplayRecorder(score);
 
         private int? previewObjectIndex;
+        private bool focusPreviewObject;
+
         private readonly Dictionary<Drawable, float> previewAlphas = new Dictionary<Drawable, float>();
+
+        public void SetReplayObjectFocus(bool focused) => focusPreviewObject = focused;
 
         public void SetReplayObjectPreview(int? objectIndex)
         {
@@ -112,6 +117,9 @@ namespace osu.Game.Rulesets.Osu.UI
                 return;
             restorePreviewAlphas();
             previewObjectIndex = objectIndex;
+            Playfield.ReplayObjectMarker.ClearTarget();
+            if (objectIndex == null)
+                focusPreviewObject = false;
         }
 
         protected override void Update()
@@ -125,18 +133,54 @@ namespace osu.Game.Rulesets.Osu.UI
         {
             base.UpdateAfterChildren();
             if (FrameStableClock.IsRunning || previewObjectIndex is not int index || index < 0 || index >= Beatmap.HitObjects.Count)
+            {
+                Playfield.ReplayObjectMarker.ClearTarget();
                 return;
+            }
 
             var obj = Beatmap.HitObjects[index];
             if (Math.Abs(FrameStableClock.CurrentTime - ReplayTransport.ObjectAppearanceTime(obj)) >= 0.001)
+            {
+                Playfield.ReplayObjectMarker.ClearTarget();
                 return;
+            }
 
             // At the exact preempt boundary the native fade starts at alpha zero and cannot advance while paused.
             // Keep the original timestamp, geometry, skin, transforms and judgements; reveal only its frozen preview.
             var drawable = Playfield.HitObjectContainer.AliveObjects.FirstOrDefault(d => d.HitObject == obj);
             if (drawable == null || drawable.Judged)
+            {
+                Playfield.ReplayObjectMarker.ClearTarget();
                 return;
+            }
 
+            var head = drawable switch
+            {
+                DrawableHitCircle circle => circle,
+                DrawableSlider slider => slider.HeadCircle,
+                _ => null,
+            };
+            RectangleF bounds;
+            if (head != null)
+                bounds = Playfield.ToLocalSpace(head.HitArea.ScreenSpaceDrawQuad).AABBFloat;
+            else
+            {
+                var centre = Playfield.ToLocalSpace(drawable.ScreenSpaceDrawQuad.Centre);
+                bounds = new RectangleF(centre.X - 32, centre.Y - 32, 64, 64);
+            }
+            Playfield.ReplayObjectMarker.SetTarget(index, bounds);
+            if (focusPreviewObject)
+            {
+                // Root alpha also applies to its proxied approach circle / slider / spinner layers.
+                // Restore before the next pool or gameplay update, just like the frozen preview.
+                foreach (var other in Playfield.HitObjectContainer.AliveObjects.Where(d => d != drawable))
+                {
+                    previewAlphas.TryAdd(other, other.Alpha);
+                    other.Alpha *= 0.12f;
+                }
+                previewAlphas.TryAdd(Playfield.FollowPoints, Playfield.FollowPoints.Alpha);
+                Playfield.FollowPoints.Alpha *= 0.12f;
+            }
             showPreview(drawable, 1);
             switch (drawable)
             {

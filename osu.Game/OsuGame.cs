@@ -178,6 +178,9 @@ namespace osu.Game
         private readonly LegacyImportManager legacyImportManager = new LegacyImportManager();
 
         [Cached]
+        private readonly LazerBeatmapSyncManager lazerBeatmapSyncManager = new LazerBeatmapSyncManager();
+
+        [Cached]
         private readonly ScreenshotManager screenshotManager = new ScreenshotManager();
 
         private SentryLogger sentryLogger;
@@ -1212,6 +1215,7 @@ namespace osu.Game
             }), rightFloatingOverlayContent.Add, true);
 
             loadComponentSingleFile(legacyImportManager, Add);
+            loadComponentSingleFile(lazerBeatmapSyncManager, Add);
 
             loadComponentSingleFile(screenshotManager, Add);
 

@@ -327,7 +327,7 @@ namespace osu.Game.Database
         {
             TModel? existing;
 
-            if (parameters.Batch && archive != null)
+            if (parameters.Batch && archive != null && !parameters.EnsureIndependentFiles && parameters.CanCommit == null)
             {
                 // this is a fast bail condition to improve large import performance.
                 item.Hash = computeHashFast(archive);
@@ -376,7 +376,7 @@ namespace osu.Game.Database
                             throw new InvalidOperationException($@"Filename ""{filenames.original}"" is not allowed.");
 
                         using (Stream s = archive.GetStream(filenames.original))
-                            files.Add(new RealmNamedFileUsage(Files.Add(s, realm, false, parameters.PreferHardLinks), filenames.shortened));
+                            files.Add(new RealmNamedFileUsage(Files.Add(s, realm, false, parameters.PreferHardLinks, parameters.EnsureIndependentFiles), filenames.shortened));
                     }
                 }
 
@@ -400,6 +400,9 @@ namespace osu.Game.Database
                 using (var transaction = realm.BeginWrite())
                 {
                     // TODO: we may want to run this outside of the transaction.
+                    if (parameters.CanCommit?.Invoke() == false)
+                        throw new OperationCanceledException("The external library or local beatmap changed before import could commit.");
+
                     Populate(item, archive, realm, cancellationToken);
 
                     // Populate() may have adjusted file content (see SkinImporter.updateSkinIniMetadata), so regardless of whether a fast check was done earlier, let's

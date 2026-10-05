@@ -41,6 +41,7 @@ namespace osu.Game.Rulesets.Osu.UI
         // Skipping masking calculations improves performance in intense beatmaps (ie. https://osu.ppy.sh/beatmapsets/150945#osu/372245)
         public override bool UpdateSubTreeMasking() => false;
 
+        public ReplayObjectMarker ReplayObjectMarker { get; }
         public SmokeContainer Smoke { get; }
         public FollowPointRenderer FollowPoints { get; }
 
@@ -71,6 +72,7 @@ namespace osu.Game.Rulesets.Osu.UI
                 HitObjectContainer,
                 judgementAboveHitObjectLayer = new Container { RelativeSizeAxes = Axes.Both },
                 approachCircles = new ProxyContainer { RelativeSizeAxes = Axes.Both },
+                ReplayObjectMarker = new ReplayObjectMarker(),
             };
 
             HitPolicy = new StartTimeOrderedHitPolicy();

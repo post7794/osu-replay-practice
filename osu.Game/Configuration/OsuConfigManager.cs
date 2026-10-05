@@ -1,4 +1,4 @@
-﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
@@ -37,6 +37,11 @@ namespace osu.Game.Configuration
 
         protected override void InitialiseDefaults()
         {
+            SetDefault(OsuSetting.StableSyncEnabled, false);
+            SetDefault(OsuSetting.StableSyncPath, string.Empty);
+            SetDefault(OsuSetting.LazerSyncEnabled, false);
+            SetDefault(OsuSetting.LazerSyncPath, string.Empty);
+
             // UI/selection defaults
             SetDefault(OsuSetting.Ruleset, string.Empty);
             SetDefault(OsuSetting.Skin, SkinInfo.ARGON_SKIN.ToString());
@@ -485,5 +490,10 @@ namespace osu.Game.Configuration
         /// Blocks private messages, multiplayer room invites, and duel requests from people not on the user's friends list.
         /// </summary>
         PMFriendsOnly,
+
+        StableSyncEnabled,
+        StableSyncPath,
+        LazerSyncEnabled,
+        LazerSyncPath,
     }
 }

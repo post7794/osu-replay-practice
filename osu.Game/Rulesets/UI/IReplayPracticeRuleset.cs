@@ -22,6 +22,7 @@ namespace osu.Game.Rulesets.UI
         /// </summary>
         void SetReplayScoreForFailureAnalysis(Score score);
         void SetReplayObjectPreview(int? objectIndex);
+        void SetReplayObjectFocus(bool focused);
         ReplayPracticeRange PrepareObjectPractice(int startingObjectIndex);
         double GetSafeReplayPracticeTime(double requestedTime);
         bool IsReplayPracticeReady(double time);

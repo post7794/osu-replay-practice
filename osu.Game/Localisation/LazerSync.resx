@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <data name="Header" xml:space="preserve"><value>Official osu!lazer two-way beatmap / replay sync</value></data>
+  <data name="Enable" xml:space="preserve"><value>Enable two-way sync (writes to official lazer)</value></data>
+  <data name="Path" xml:space="preserve"><value>Official lazer data directory (contains client.realm and files)</value></data>
+  <data name="Browse" xml:space="preserve"><value>Choose lazer data directory</value></data>
+  <data name="Detect" xml:space="preserve"><value>Detect official lazer data directory</value></data>
+  <data name="SyncNow" xml:space="preserve"><value>Synchronise now (verify all file contents)</value></data>
+  <data name="Publish" xml:space="preserve"><value>Link / publish selected beatmap to official lazer</value></data>
+  <data name="UseOfficial" xml:space="preserve"><value>Selected conflict: keep official lazer version</value></data>
+  <data name="UseLocal" xml:space="preserve"><value>Selected conflict: keep this client version</value></data>
+  <data name="Help" xml:space="preserve"><value>Close official lazer before syncing. In menus, beatmaps and saved local replays sync both ways every 15 seconds. Replays include their score metadata, are deduplicated by content, and are never uploaded. Matching beatmap versions are required. Backups: lazer-sync/backups. Deletions, skins and account settings are not synced.</value></data>
+  <data name="PublishHelp" xml:space="preserve"><value>Publish or link the selected local beatmap to official lazer. Unlinked local beatmaps are never published automatically. Close official lazer first.</value></data>
+  <data name="ResolveHelp" xml:space="preserve"><value>Back up both sides, then replace the other beatmap with the selected version. Close official lazer and stop editing in this client first. Raw lazer files are kept without timing or position rounding.</value></data>
+  <data name="Disabled" xml:space="preserve"><value>Two-way sync is disabled.</value></data>
+  <data name="Waiting" xml:space="preserve"><value>Sync waits until you return to the main menu or song select.</value></data>
+  <data name="Scanning" xml:space="preserve"><value>Checking official lazer beatmaps and replays…</value></data>
+  <data name="NotFound" xml:space="preserve"><value>Official lazer data was not detected. Select the directory containing client.realm and files, not its installation directory.</value></data>
+  <data name="SelectBeatmap" xml:space="preserve"><value>Select a local beatmap in song select first.</value></data>
+  <data name="Result" xml:space="preserve"><value>Beatmaps in/out: {0}/{1}; replays in/out: {3}/{4}; needs attention: {2}.</value></data>
+  <data name="Attention" xml:space="preserve"><value>Sync needs attention: {0}</value></data>
+  <data name="Error" xml:space="preserve"><value>Sync failed: {0}</value></data>
+  <data name="CloseOfficial" xml:space="preserve"><value>Waiting for official lazer to close. Your changes will sync after it exits.</value></data>
+</root>

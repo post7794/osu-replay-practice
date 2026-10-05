@@ -12,6 +12,7 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Input.Events;
 using osu.Framework.Localisation;
+using osu.Framework.Platform;
 using osu.Game.Graphics;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
@@ -43,6 +44,7 @@ namespace osu.Game.Screens.Play.HUD
         private readonly RoundedButton pause;
         private readonly RoundedButton primary;
         private readonly RoundedButton[] navigation;
+        private readonly HoldFocusButton focus;
         private readonly TransportKeyBindingButton shortcuts;
         private readonly List<ButtonRow> rows = new List<ButtonRow>();
         private readonly List<TransportButton> buttons = new List<TransportButton>();
@@ -89,6 +91,14 @@ namespace osu.Game.Screens.Play.HUD
                 button(ReplayPracticeStrings.PreviousIgnored, () => transport.SeekPreviousFailure(ReplayFailureKind.Ignored)),
                 button(ReplayPracticeStrings.NextIgnored, () => transport.SeekNextFailure(ReplayFailureKind.Ignored)),
             };
+            focus = new HoldFocusButton
+            {
+                Text = ReplayPracticeStrings.HoldObjectFocus,
+                TooltipText = ReplayPracticeStrings.HoldObjectFocusHelp,
+                RelativeSizeAxes = Axes.Both,
+                Size = Vector2.One,
+            };
+            buttons.Add(focus);
             navigation[6].TooltipText = ReplayPracticeStrings.PreviousMissHelp;
             navigation[7].TooltipText = ReplayPracticeStrings.NextMissHelp;
             navigation[8].TooltipText = ReplayPracticeStrings.PreviousIgnoredHelp;
@@ -134,6 +144,7 @@ namespace osu.Game.Screens.Play.HUD
                             position = text(12),
                             row(pause, primary),
                             row(navigation.Take(2).Cast<Drawable>().ToArray()),
+                            row(focus),
                             row(navigation.Skip(2).Take(2).Cast<Drawable>().ToArray()),
                             row(navigation.Skip(4).Take(2).Cast<Drawable>().ToArray()),
                             row(navigation.Skip(6).Take(2).Cast<Drawable>().ToArray()),
@@ -289,6 +300,9 @@ namespace osu.Game.Screens.Play.HUD
             base.Update();
             foreach (var b in navigation)
                 b.Enabled.Value = transport.CanSeekTransport;
+            focus.Enabled.Value = transport.CanSeekTransport && transport.IsTransportPaused && transport.SelectedObject != null
+                                  && (player is not ReplayPracticePlayer p || p.Session.State == ReplayPracticeState.Paused);
+            (ruleset as IReplayPracticeRuleset)?.SetReplayObjectFocus(focus.IsHeld && focus.Enabled.Value && IsPresent);
             double displayedTime = player switch
             {
                 ReplayPracticePlayer { Session.State: ReplayPracticeState.Restoring } restoring => restoring.Session.StartTime,
@@ -361,6 +375,46 @@ namespace osu.Game.Screens.Play.HUD
                 }
             }
             protected override SpriteText CreateText() => createButtonText();
+        }
+
+        private partial class HoldFocusButton : TransportButton
+        {
+            private bool held;
+
+            [Resolved]
+            private GameHost host { get; set; } = null!;
+
+            public bool IsHeld => held && Enabled.Value && IsHovered && host.IsActive.Value;
+
+            protected override bool OnMouseDown(MouseDownEvent e)
+            {
+                if (e.Button != MouseButton.Left || !Enabled.Value)
+                    return false;
+                held = true;
+                base.OnMouseDown(e);
+                return true;
+            }
+
+            protected override void OnMouseUp(MouseUpEvent e)
+            {
+                if (e.Button == MouseButton.Left) held = false;
+                base.OnMouseUp(e);
+            }
+
+            protected override void OnHoverLost(HoverLostEvent e)
+            {
+                held = false;
+                base.OnHoverLost(e);
+            }
+
+            protected override void Update()
+            {
+                base.Update();
+                if (!Enabled.Value || !host.IsActive.Value || !IsPresent)
+                    held = false;
+            }
+
+            protected override bool OnClick(ClickEvent e) => true;
         }
 
         private partial class TransportKeyBindingButton : ReplayKeyBindingButton

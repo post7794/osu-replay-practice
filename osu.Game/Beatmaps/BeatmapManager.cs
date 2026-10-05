@@ -100,6 +100,8 @@ namespace osu.Game.Beatmaps
             return new WorkingBeatmapCache(BeatmapTrackStore, audioManager, resources, storage, defaultBeatmap, host, Realm);
         }
 
+        internal void ProcessSyncedBeatmap(BeatmapSetInfo set, MetadataLookupScope scope) => ProcessBeatmap?.Invoke(set, scope);
+
         protected virtual BeatmapImporter CreateBeatmapImporter(Storage storage, RealmAccess realm) => new BeatmapImporter(storage, realm);
 
         /// <summary>

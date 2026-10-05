@@ -1,4 +1,4 @@
-﻿osu! Replay Practice - 非官方回放接管测试版
+osu! Replay Practice - 非官方回放接管测试版
 =========================================
 
 仅用于测试，不是 osu! 官方发行版。
@@ -50,6 +50,9 @@ Ctrl+Shift+Backspace   直接退出回放或训练
 支持 osu!standard 的真实回放接管和 Autoplay（AT）自动基线接管。
 CN/RX/AP/SO 等其他自动操作 Mods 不支持接管；普通观看仍可使用。
 回放必须与导入的谱面匹配。
+上一 / 下一物件会显示金色定位框和“当前 #编号”（物件顺序，不是连击数）。
+重叠时按住侧栏“聚焦当前物件”可淡化其他物件；松开或移开鼠标恢复。
+标记独立于皮肤；恢复播放或正式开打时自动隐藏，不改变时间或判定。
 内置资源不等于已经导入的测试谱面；需要测试者自行准备素材。
 Autoplay 基线只在内存中生成一次；接管后移除 AT，其他 Mods 保留。
 重试及定位复用相同基线；返回观看会恢复 AT，并在练习起点暂停。
@@ -91,3 +94,15 @@ The generated baseline is kept only in memory and reused on retry/seek/return.
 It does not recover your lost play history. CN/RX/AP/SO and non-standard rulesets
 still cannot be taken over.
 Include the package name from build-info.json when reporting issues.
+
+Official osu!lazer two-way sync / 官方 lazer 曲库双向同步
+Settings > Maintenance > Official osu!lazer two-way beatmap / replay sync.
+Close official lazer first. Detect or select its data directory containing client.realm and files.
+Enable sync explicitly. Never share the two clients' entire data directories.
+Raw beatmap and resource changes sync both ways while this client is in menus.
+Saved local replays and their score metadata also sync both ways (content deduplication, no uploads or deletion propagation). Matching beatmap versions are required; online-only scores are skipped. Reopen official lazer after syncing. Skins and account settings are not synced.
+See LAZER_SYNC.md for backups, conflicts, schema compatibility and interrupted-write recovery.
+设置 → 维护 → 官方 osu!lazer 曲库 / 回放双向同步。先关闭官方版，再检测数据目录并启用。
+不是 Songs 同步，不要选择程序安装目录或 files 子目录。建议先测试曲库副本。
+已保存的本地回放会连同成绩记录双向同步，按内容去重，不上传或传播删除。
+两端必须有完全相同的谱面版本；在线成绩未下载回放的不处理。同步后在选歌的本地成绩中观看。

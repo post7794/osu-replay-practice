@@ -457,6 +457,21 @@ namespace osu.Game.Localisation
         public static LocalisableString ExitAction => new TranslatableString(getKey(@"ExitAction"), @"Exit replay or practice");
 
         /// <summary>
+        /// "Hold to focus object"
+        /// </summary>
+        public static LocalisableString HoldObjectFocus => new TranslatableString(getKey(@"HoldObjectFocus"), @"Hold to focus object");
+
+        /// <summary>
+        /// "While paused on an object, hold the left mouse button here to dim other objects. Release or move away to restore them. Does not alter skins, timing or judgements."
+        /// </summary>
+        public static LocalisableString HoldObjectFocusHelp => new TranslatableString(getKey(@"HoldObjectFocusHelp"), @"While paused on an object, hold the left mouse button here to dim other objects. Release or move away to restore them. Does not alter skins, timing or judgements.");
+
+        /// <summary>
+        /// "Selected #{0}"
+        /// </summary>
+        public static LocalisableString SelectedObjectMarker(int number) => new TranslatableString(getKey(@"SelectedObjectMarker"), @"Selected #{0}", number);
+
+        /// <summary>
         /// "Pause / resume replay or practice"
         /// </summary>
         public static LocalisableString PauseAction => new TranslatableString(getKey(@"PauseAction"), @"Pause / resume replay or practice");

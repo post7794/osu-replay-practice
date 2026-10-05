@@ -1,4 +1,4 @@
-﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
+// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
@@ -41,7 +41,8 @@ namespace osu.Game.Database
         /// <param name="realm">The realm instance to add to. Should already be in a transaction.</param>
         /// <param name="addToRealm">Whether the <see cref="RealmFile"/> should immediately be added to the underlying realm. If <c>false</c> is provided here, the instance must be manually added.</param>
         /// <param name="preferHardLinks">Whether this import should use hard links rather than file copy operations if available.</param>
-        public RealmFile Add(Stream data, Realm realm, bool addToRealm = true, bool preferHardLinks = false)
+        /// <param name="ensureIndependentCopy">Replace existing storage files rather than retain possible hard links to mutable external files.</param>
+        public RealmFile Add(Stream data, Realm realm, bool addToRealm = true, bool preferHardLinks = false, bool ensureIndependentCopy = false)
         {
             string hash = data.ComputeSHA2Hash();
 
@@ -49,8 +50,8 @@ namespace osu.Game.Database
 
             var file = existing ?? new RealmFile { Hash = hash };
 
-            if (!checkFileExistsAndMatchesHash(file))
-                copyToStore(file, data, preferHardLinks);
+            if (ensureIndependentCopy || !checkFileExistsAndMatchesHash(file))
+                copyToStore(file, data, preferHardLinks && !ensureIndependentCopy);
 
             if (addToRealm && !file.IsManaged)
                 realm.Add(file);

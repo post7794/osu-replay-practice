@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <data name="Header" xml:space="preserve"><value>官方 osu!lazer 曲库 / 回放双向同步</value></data>
+  <data name="Enable" xml:space="preserve"><value>启用双向同步（会写入官方 lazer）</value></data>
+  <data name="Path" xml:space="preserve"><value>官方 lazer 数据目录（包含 client.realm 和 files）</value></data>
+  <data name="Browse" xml:space="preserve"><value>选择 lazer 数据目录</value></data>
+  <data name="Detect" xml:space="preserve"><value>自动检测官方 lazer 数据目录</value></data>
+  <data name="SyncNow" xml:space="preserve"><value>立即同步（校验所有文件内容）</value></data>
+  <data name="Publish" xml:space="preserve"><value>关联 / 发布所选曲目到官方 lazer</value></data>
+  <data name="UseOfficial" xml:space="preserve"><value>所选曲目冲突：采用官方 lazer 版本</value></data>
+  <data name="UseLocal" xml:space="preserve"><value>所选曲目冲突：采用本客户端版本</value></data>
+  <data name="Help" xml:space="preserve"><value>请先关闭官方 lazer。菜单中每 15 秒双向同步曲目和已保存的本地回放；回放连同成绩记录按内容去重，不上传。必须有完全匹配的谱面版本。备份保存在 lazer-sync/backups；删除、皮肤和账号设置不同步。</value></data>
+  <data name="PublishHelp" xml:space="preserve"><value>将所选本地曲目关联或发布到官方 lazer。未关联曲目不会自动发布。请先关闭官方 lazer。</value></data>
+  <data name="ResolveHelp" xml:space="preserve"><value>先备份两端，再用选定版本替换另一端的曲目。请先关闭官方 lazer 并停止改版中的编辑。保留原始 lazer 文件，不取整时间或坐标。</value></data>
+  <data name="Disabled" xml:space="preserve"><value>双向同步未启用。</value></data>
+  <data name="Waiting" xml:space="preserve"><value>同步等待返回主菜单或选歌界面。</value></data>
+  <data name="Scanning" xml:space="preserve"><value>正在检查官方 lazer 曲库和回放…</value></data>
+  <data name="NotFound" xml:space="preserve"><value>未检测到官方 lazer 数据，请选择包含 client.realm 和 files 的目录，不是程序安装目录。</value></data>
+  <data name="SelectBeatmap" xml:space="preserve"><value>请先在选歌界面选择一首本地曲目。</value></data>
+  <data name="Result" xml:space="preserve"><value>曲目导入 / 写回：{0} / {1}；回放导入 / 写回：{3} / {4}；需要处理：{2}。</value></data>
+  <data name="Attention" xml:space="preserve"><value>同步需要处理：{0}</value></data>
+  <data name="Error" xml:space="preserve"><value>同步失败：{0}</value></data>
+  <data name="CloseOfficial" xml:space="preserve"><value>等待关闭官方 lazer；退出后会自动同步你的修改。</value></data>
+</root>
